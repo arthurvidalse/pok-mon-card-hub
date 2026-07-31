@@ -17,8 +17,9 @@ import {
 import { Header } from "@/components/site/header";
 import { WhatsAppFab } from "@/components/site/whatsapp-fab";
 import { PokemonCard } from "@/components/collection/pokemon-card";
-import { getSettings, getStats, listPokemons, type CardStatus } from "@/lib/collection.functions";
+import { getSettings, getStats, listPokemons, listCustomCards, type CardStatus } from "@/lib/collection.functions";
 import { listCollectionGroups, type CollectionGroup } from "@/lib/collection-groups.functions";
+import { CustomCard } from "@/components/collection/custom-card";
 import { GENERATIONS, STATUS_OPTIONS } from "@/lib/status";
 
 const searchSchema = z.object({
@@ -59,6 +60,7 @@ function CollectionsPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const list = useServerFn(listPokemons);
+  const listCustom = useServerFn(listCustomCards);
   const stats = useServerFn(getStats);
   const settings = useServerFn(getSettings);
   const groups = useServerFn(listCollectionGroups);
@@ -88,6 +90,12 @@ function CollectionsPage() {
       }),
     enabled: ready,
     placeholderData: keepPreviousData,
+  });
+
+  const customCardsQuery = useQuery({
+    queryKey: ["custom-cards", groupId, search.q ?? "", search.status],
+    queryFn: () => listCustom({ data: { groupId: groupId!, search: search.q, status: search.status as CardStatus | "todos" } }),
+    enabled: ready && !isFullDex && groupId !== null,
   });
 
   const total = pokemonsQuery.data?.total ?? 0;
@@ -229,16 +237,26 @@ function CollectionsPage() {
                 {pokemonsQuery.data?.items.map((pokemon) => (
                   <PokemonCard key={pokemon.id} pokemon={pokemon} />
                 ))}
+                {!isFullDex && (customCardsQuery.data ?? []).map((card) => (
+                  <CustomCard key={card.id} card={card} />
+                ))}
               </div>
             ) : (
               <div className="mt-4 flex flex-col gap-2">
                 {pokemonsQuery.data?.items.map((pokemon) => (
                   <PokemonCard key={pokemon.id} pokemon={pokemon} compact />
                 ))}
+                {!isFullDex && (customCardsQuery.data ?? []).map((card) => (
+                  <div key={card.id} className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2">
+                    <img src={card.image_url ?? ""} alt="" className="size-9 object-contain" />
+                    <span className="w-14 shrink-0 font-mono text-xs text-muted-foreground">{card.card_number || "---"}</span>
+                    <span className="truncate font-medium">{card.name || "Sem Nome"}</span>
+                  </div>
+                ))}
               </div>
             )}
 
-            {total === 0 && !pokemonsQuery.isLoading ? (
+            {total === 0 && !pokemonsQuery.isLoading && (customCardsQuery.data?.length ?? 0) === 0 ? (
               <p className="mt-10 text-center text-muted-foreground">
                 {isFullDex
                   ? "Nenhum Pokémon com esses filtros."

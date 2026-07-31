@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { LogOut, Save, Search } from "lucide-react";
+import { LogOut, Plus, Save, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,8 +20,8 @@ import {
 import { Header } from "@/components/site/header";
 import { CollectionGroupsAdmin } from "@/components/admin/collection-groups-admin";
 
-import { getSettings, getStats, listPokemons, type CardStatus } from "@/lib/collection.functions";
-import { amIAdmin, listContactLog, updateCardStatus, updateSetting, createCard } from "@/lib/admin.functions";
+import { getSettings, getStats, listPokemons, listCustomCards, type CardStatus, type CustomCardRow } from "@/lib/collection.functions";
+import { amIAdmin, listContactLog, updateCardStatus, updateSetting, createCard, createCustomCard, deleteCard } from "@/lib/admin.functions";
 import { listAllCollectionGroups } from "@/lib/collection-groups.functions";
 import { STATUS_OPTIONS, padDex } from "@/lib/status";
 
@@ -179,11 +179,19 @@ function AdminPage() {
 
         <Tabs defaultValue="cartas" className="mt-6">
           <TabsList>
-            <TabsTrigger value="cartas">Cartas</TabsTrigger>
+            <TabsTrigger value="cartas">Cartas (Pokédex)</TabsTrigger>
+            <TabsTrigger value="extras">Cartas Extras</TabsTrigger>
             <TabsTrigger value="colecoes">Coleções</TabsTrigger>
             <TabsTrigger value="contatos">Contatos</TabsTrigger>
             <TabsTrigger value="config">Configurações</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="extras" className="mt-4">
+            <CustomCardsAdmin
+              enabled={adminQuery.data?.isAdmin === true}
+              groups={groupsQuery.data ?? []}
+            />
+          </TabsContent>
 
           <TabsContent value="colecoes" className="mt-4">
             <CollectionGroupsAdmin enabled={adminQuery.data?.isAdmin === true} />
@@ -345,3 +353,252 @@ function AdminPage() {
     </div>
   );
 }
+
+// ──────────────────────────────────────────────────
+// Componente: Aba de Cartas Extras
+// ──────────────────────────────────────────────────
+
+type CustomCardGroup = { id: string; name: string };
+
+type CardDraft = {
+  name: string;
+  card_number: string;
+  image_url: string;
+  status: CardStatus;
+};
+
+const EMPTY_DRAFT: CardDraft = {
+  name: "",
+  card_number: "",
+  image_url: "",
+  status: "nao_tenho",
+};
+
+function CustomCardsAdmin({ enabled, groups }: { enabled: boolean; groups: CustomCardGroup[] }) {
+  const queryClient = useQueryClient();
+  const listCustom = useServerFn(listCustomCards);
+  const addCustom = useServerFn(createCustomCard);
+  const remove = useServerFn(deleteCard);
+  const saveStatus = useServerFn(updateCardStatus);
+
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [showForm, setShowForm] = useState(false);
+  const [draft, setDraft] = useState<CardDraft>({ ...EMPTY_DRAFT });
+  const [saving, setSaving] = useState(false);
+
+  const customQuery = useQuery({
+    queryKey: ["admin-custom-cards", selectedGroupId],
+    queryFn: () => listCustom({ data: { groupId: selectedGroupId } }),
+    enabled: enabled && Boolean(selectedGroupId),
+  });
+
+  async function handleSubmit() {
+    if (!draft.name.trim()) {
+      toast.error("O nome da carta é obrigatório.");
+      return;
+    }
+    if (!selectedGroupId) {
+      toast.error("Selecione uma coleção.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await addCustom({
+        data: {
+          name: draft.name.trim(),
+          card_number: draft.card_number.trim() || null,
+          image_url: draft.image_url.trim() || null,
+          status: draft.status,
+          collection_group_id: selectedGroupId,
+        },
+      });
+      toast.success("Carta adicionada!");
+      setDraft({ ...EMPTY_DRAFT });
+      setShowForm(false);
+      await queryClient.invalidateQueries({ queryKey: ["admin-custom-cards", selectedGroupId] });
+      await queryClient.invalidateQueries({ queryKey: ["custom-cards"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao salvar.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(cardId: string) {
+    try {
+      await remove({ data: { cardId } });
+      toast.success("Carta removida.");
+      await queryClient.invalidateQueries({ queryKey: ["admin-custom-cards", selectedGroupId] });
+      await queryClient.invalidateQueries({ queryKey: ["custom-cards"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao remover.");
+    }
+  }
+
+  async function handleStatusChange(cardId: string, next: CardStatus) {
+    try {
+      await saveStatus({ data: { cardId, status: next } });
+      toast.success("Status atualizado!");
+      await queryClient.invalidateQueries({ queryKey: ["admin-custom-cards", selectedGroupId] });
+      await queryClient.invalidateQueries({ queryKey: ["custom-cards"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao atualizar.");
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Seleção de coleção + botão nova carta */}
+      <div className="flex flex-wrap items-center gap-3">
+        <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
+          <SelectTrigger className="w-64">
+            <SelectValue placeholder="Selecione a coleção" />
+          </SelectTrigger>
+          <SelectContent>
+            {groups.map((g) => (
+              <SelectItem key={g.id} value={g.id}>
+                {g.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          onClick={() => { setShowForm(true); setDraft({ ...EMPTY_DRAFT }); }}
+          disabled={!selectedGroupId}
+        >
+          <Plus className="size-4" /> Nova Carta
+        </Button>
+      </div>
+
+      {/* Formulário de nova carta */}
+      {showForm && (
+        <div className="grid gap-3 rounded-2xl border bg-card p-5 sm:grid-cols-2">
+          <div className="space-y-1">
+            <Label htmlFor="cc-name">Nome da Carta *</Label>
+            <Input
+              id="cc-name"
+              value={draft.name}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+              placeholder="Ex: Treinador Ash, Poção, etc."
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="cc-number">Número da Carta</Label>
+            <Input
+              id="cc-number"
+              value={draft.card_number}
+              onChange={(e) => setDraft({ ...draft, card_number: e.target.value })}
+              placeholder="Ex: 001/165"
+            />
+          </div>
+          <div className="space-y-1 sm:col-span-2">
+            <Label htmlFor="cc-image">URL da Imagem</Label>
+            <Input
+              id="cc-image"
+              value={draft.image_url}
+              onChange={(e) => setDraft({ ...draft, image_url: e.target.value })}
+              placeholder="https://..."
+            />
+          </div>
+
+          {/* Preview da imagem */}
+          {draft.image_url && (
+            <div className="flex items-center gap-3 rounded-xl border bg-secondary/30 p-3 sm:col-span-2">
+              <img
+                src={draft.image_url}
+                alt="Preview"
+                className="h-24 w-auto rounded-lg object-contain"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+              />
+              <p className="text-sm text-muted-foreground">Preview da imagem</p>
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <Label>Status inicial</Label>
+            <Select
+              value={draft.status}
+              onValueChange={(v) => setDraft({ ...draft, status: v as CardStatus })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.filter((o) => o.value !== "todos").map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-end gap-2 sm:col-span-2">
+            <Button onClick={handleSubmit} disabled={saving}>
+              <Save className="size-4" /> {saving ? "Salvando..." : "Salvar Carta"}
+            </Button>
+            <Button variant="outline" onClick={() => setShowForm(false)}>
+              Cancelar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Lista de cartas da coleção selecionada */}
+      {!selectedGroupId ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          Selecione uma coleção acima para ver e gerenciar suas cartas extras.
+        </p>
+      ) : customQuery.isLoading ? (
+        <div className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
+        </div>
+      ) : (customQuery.data ?? []).length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          Nenhuma carta extra cadastrada nesta coleção. Clique em "Nova Carta" para começar.
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {(customQuery.data as CustomCardRow[]).map((card) => (
+            <div
+              key={card.id}
+              className="flex flex-wrap items-center gap-3 rounded-xl border bg-card px-3 py-2"
+            >
+              {card.image_url ? (
+                <img src={card.image_url} alt="" className="size-12 rounded object-contain" />
+              ) : (
+                <div className="size-12 rounded bg-secondary" />
+              )}
+              <div className="min-w-40 flex-1">
+                <p className="font-medium">{card.name || "Sem nome"}</p>
+                <p className="text-xs text-muted-foreground">{card.card_number || "Sem número"}</p>
+              </div>
+              <Select
+                value={card.status}
+                onValueChange={(v) => void handleStatusChange(card.id, v as CardStatus)}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.filter((o) => o.value !== "todos").map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => void handleDelete(card.id)}
+              >
+                <Trash2 className="size-4 text-destructive" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+

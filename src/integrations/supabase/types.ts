@@ -24,8 +24,9 @@ export type Database = {
           id: string
           image_url: string | null
           is_target: boolean
+          name: string | null
           notes: string | null
-          pokemon_id: string
+          pokemon_id: string | null
           status: Database["public"]["Enums"]["card_status"]
           updated_at: string
         }
@@ -38,8 +39,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_target?: boolean
+          name?: string | null
           notes?: string | null
-          pokemon_id: string
+          pokemon_id?: string | null
           status?: Database["public"]["Enums"]["card_status"]
           updated_at?: string
         }
@@ -52,8 +54,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_target?: boolean
+          name?: string | null
           notes?: string | null
-          pokemon_id?: string
+          pokemon_id?: string | null
           status?: Database["public"]["Enums"]["card_status"]
           updated_at?: string
         }

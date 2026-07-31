@@ -32,6 +32,7 @@ export const updateCardDetails = createServerFn({ method: "POST" })
   .inputValidator(
     (input: {
       cardId: string;
+      name?: string | null;
       card_number?: string | null;
       card_type?: string | null;
       image_url?: string | null;
@@ -60,6 +61,38 @@ export const createCard = createServerFn({ method: "POST" })
       collection_group_id: data.collection_group_id,
       status: "nao_tenho",
     });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const createCustomCard = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { 
+    name: string; 
+    card_number?: string | null; 
+    image_url?: string | null; 
+    status: CardStatus; 
+    collection_group_id: string 
+  }) => input)
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("cards").insert({
+      name: data.name,
+      card_number: data.card_number,
+      image_url: data.image_url,
+      status: data.status,
+      collection_group_id: data.collection_group_id,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteCard = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { cardId: string }) => input)
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("cards").delete().eq("id", data.cardId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

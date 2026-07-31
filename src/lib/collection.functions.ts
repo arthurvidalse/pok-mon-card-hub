@@ -4,6 +4,7 @@ export type CardStatus = "tenho_full_art" | "tenho_comum" | "nao_tenho";
 
 export type CardRow = {
   id: string;
+  name?: string | null;
   card_number: string | null;
   card_type: string | null;
   image_url: string | null;
@@ -12,6 +13,15 @@ export type CardRow = {
   notes: string | null;
   updated_at: string;
   collection: { id: string; name: string; code: string | null; release_year: number | null } | null;
+};
+
+export type CustomCardRow = {
+  id: string;
+  name: string | null;
+  card_number: string | null;
+  image_url: string | null;
+  status: CardStatus;
+  collection_group_id: string | null;
 };
 
 export type PokemonRow = {
@@ -188,4 +198,28 @@ export const logContact = createServerFn({ method: "POST" })
       intent: data.intent,
     });
     return { ok: true };
+  });
+
+export const listCustomCards = createServerFn({ method: "GET" })
+  .inputValidator((input: { groupId: string; search?: string; status?: CardStatus | "todos" }) => input)
+  .handler(async ({ data }): Promise<CustomCardRow[]> => {
+    const { createPublicClient } = await import("./supabase-public.server");
+    const supabase = createPublicClient();
+    
+    let query = supabase
+      .from("cards")
+      .select("id, name, card_number, image_url, status, collection_group_id")
+      .is("pokemon_id", null)
+      .eq("collection_group_id", data.groupId);
+      
+    if (data.status && data.status !== "todos") {
+      query = query.eq("status", data.status);
+    }
+    if (data.search?.trim()) {
+      const term = data.search.trim();
+      query = query.ilike("name", `%${term}%`);
+    }
+    
+    const { data: rows } = await query.order("card_number", { ascending: true });
+    return (rows ?? []) as unknown as CustomCardRow[];
   });
