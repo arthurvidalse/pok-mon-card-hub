@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Header } from "@/components/site/header";
+import { CollectionGroupsAdmin } from "@/components/admin/collection-groups-admin";
+
 import { getSettings, getStats, listPokemons, type CardStatus } from "@/lib/collection.functions";
 import { amIAdmin, listContactLog, updateCardStatus, updateSetting } from "@/lib/admin.functions";
 import { STATUS_OPTIONS, padDex } from "@/lib/status";
@@ -153,9 +155,15 @@ function AdminPage() {
         <Tabs defaultValue="cartas" className="mt-6">
           <TabsList>
             <TabsTrigger value="cartas">Cartas</TabsTrigger>
+            <TabsTrigger value="colecoes">Coleções</TabsTrigger>
             <TabsTrigger value="contatos">Contatos</TabsTrigger>
             <TabsTrigger value="config">Configurações</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="colecoes" className="mt-4">
+            <CollectionGroupsAdmin enabled={adminQuery.data?.isAdmin === true} />
+          </TabsContent>
+
 
           <TabsContent value="cartas" className="mt-4">
             <div className="flex flex-col gap-3 sm:flex-row">
