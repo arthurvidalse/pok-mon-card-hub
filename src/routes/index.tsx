@@ -77,6 +77,11 @@ function Home() {
                     Ver as coleções <ArrowRight className="size-4" />
                   </Link>
                 </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/admin">
+                    Painel Admin
+                  </Link>
+                </Button>
               </div>
             </div>
 

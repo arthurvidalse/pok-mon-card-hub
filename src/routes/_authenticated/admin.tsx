@@ -21,7 +21,8 @@ import { Header } from "@/components/site/header";
 import { CollectionGroupsAdmin } from "@/components/admin/collection-groups-admin";
 
 import { getSettings, getStats, listPokemons, type CardStatus } from "@/lib/collection.functions";
-import { amIAdmin, listContactLog, updateCardStatus, updateSetting } from "@/lib/admin.functions";
+import { amIAdmin, listContactLog, updateCardStatus, updateSetting, createCard } from "@/lib/admin.functions";
+import { listAllCollectionGroups } from "@/lib/collection-groups.functions";
 import { STATUS_OPTIONS, padDex } from "@/lib/status";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -49,11 +50,14 @@ function AdminPage() {
   const saveStatus = useServerFn(updateCardStatus);
   const saveSetting = useServerFn(updateSetting);
   const contacts = useServerFn(listContactLog);
+  const addCard = useServerFn(createCard);
+  const listGroups = useServerFn(listAllCollectionGroups);
 
   const [term, setTerm] = useState("");
   const [status, setStatus] = useState<CardStatus | "todos">("todos");
   const [page, setPage] = useState(0);
   const [whatsapp, setWhatsapp] = useState<string | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
 
   const adminQuery = useQuery({ queryKey: ["am-i-admin"], queryFn: () => checkAdmin() });
   const statsQuery = useQuery({ queryKey: ["stats"], queryFn: () => stats() });
@@ -61,6 +65,11 @@ function AdminPage() {
   const contactsQuery = useQuery({
     queryKey: ["contact-log"],
     queryFn: () => contacts(),
+    enabled: adminQuery.data?.isAdmin === true,
+  });
+  const groupsQuery = useQuery({
+    queryKey: ["admin-collection-groups"],
+    queryFn: () => listGroups(),
     enabled: adminQuery.data?.isAdmin === true,
   });
   const pokemonsQuery = useQuery({
@@ -96,6 +105,22 @@ function AdminPage() {
       await queryClient.invalidateQueries({ queryKey: ["settings"] });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao salvar.");
+    }
+  }
+
+  async function handleCreateCard(pokemonId: string) {
+    if (!selectedGroup) {
+      toast.error("Selecione uma coleção primeiro para adicionar a carta.");
+      return;
+    }
+    try {
+      await addCard({ data: { pokemon_id: pokemonId, collection_group_id: selectedGroup } });
+      toast.success("Carta adicionada com sucesso!");
+      await queryClient.invalidateQueries({ queryKey: ["admin-pokemons"] });
+      await queryClient.invalidateQueries({ queryKey: ["stats"] });
+      await queryClient.invalidateQueries({ queryKey: ["pokemons"] });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao adicionar carta.");
     }
   }
 
@@ -202,42 +227,74 @@ function AdminPage() {
             <div className="mt-4 space-y-2">
               {pokemonsQuery.isLoading
                 ? Array.from({ length: 8 }).map((_, index) => <Skeleton key={index} className="h-16 rounded-xl" />)
-                : pokemonsQuery.data?.items.map((pokemon) =>
-                    pokemon.cards.map((card) => (
-                      <div
-                        key={card.id}
-                        className="flex flex-wrap items-center gap-3 rounded-xl border bg-card px-3 py-2"
-                      >
-                        <img src={pokemon.sprite_url ?? ""} alt="" className="size-10 object-contain" />
-                        <div className="min-w-40 flex-1">
-                          <p className="font-medium">
-                            <span className="mr-2 font-mono text-xs text-muted-foreground">
-                              {padDex(pokemon.dex_number)}
-                            </span>
-                            {pokemon.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {card.collection?.name ?? "Coleção a definir"}
-                          </p>
+                : pokemonsQuery.data?.items.map((pokemon) => (
+                    <div key={pokemon.id} className="space-y-2">
+                      {pokemon.cards.length === 0 ? (
+                        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed bg-card/50 px-3 py-2">
+                          <img src={pokemon.sprite_url ?? ""} alt="" className="size-10 object-contain opacity-50" />
+                          <div className="min-w-40 flex-1">
+                            <p className="font-medium text-muted-foreground">
+                              <span className="mr-2 font-mono text-xs">
+                                {padDex(pokemon.dex_number)}
+                              </span>
+                              {pokemon.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">Sem carta cadastrada</p>
+                          </div>
+                          <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+                            <SelectTrigger className="w-52">
+                              <SelectValue placeholder="Selecione a coleção" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(groupsQuery.data ?? []).map((group) => (
+                                <SelectItem key={group.id} value={group.id}>
+                                  {group.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Button variant="secondary" onClick={() => void handleCreateCard(pokemon.id)}>
+                            Adicionar Carta
+                          </Button>
                         </div>
-                        <Select
-                          value={card.status}
-                          onValueChange={(value) => void changeStatus(card.id, value as CardStatus)}
-                        >
-                          <SelectTrigger className="w-52">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {STATUS_OPTIONS.filter((option) => option.value !== "todos").map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )),
-                  )}
+                      ) : (
+                        pokemon.cards.map((card) => (
+                          <div
+                            key={card.id}
+                            className="flex flex-wrap items-center gap-3 rounded-xl border bg-card px-3 py-2"
+                          >
+                            <img src={pokemon.sprite_url ?? ""} alt="" className="size-10 object-contain" />
+                            <div className="min-w-40 flex-1">
+                              <p className="font-medium">
+                                <span className="mr-2 font-mono text-xs text-muted-foreground">
+                                  {padDex(pokemon.dex_number)}
+                                </span>
+                                {pokemon.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {card.collection?.name ?? "Coleção a definir"}
+                              </p>
+                            </div>
+                            <Select
+                              value={card.status}
+                              onValueChange={(value) => void changeStatus(card.id, value as CardStatus)}
+                            >
+                              <SelectTrigger className="w-52">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {STATUS_OPTIONS.filter((option) => option.value !== "todos").map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ))}
             </div>
 
             <div className="mt-6 flex items-center justify-center gap-3">

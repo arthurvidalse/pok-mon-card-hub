@@ -50,6 +50,20 @@ export const updateCardDetails = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const createCard = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { pokemon_id: string; collection_group_id: string }) => input)
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("cards").insert({
+      pokemon_id: data.pokemon_id,
+      collection_group_id: data.collection_group_id,
+      status: "nao_tenho",
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const updateSetting = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { key: string; value: string }) => input)
