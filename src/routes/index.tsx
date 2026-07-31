@@ -84,7 +84,7 @@ function Home() {
               <img
                 src={heroAsset.url}
                 alt="Ilustração do colecionador com seus Pokémon"
-                className="w-full max-w-sm drop-shadow-2xl md:max-w-md"
+                className="w-full max-w-sm rounded-3xl drop-shadow-2xl md:max-w-md"
                 fetchPriority="high"
               />
             </div>
