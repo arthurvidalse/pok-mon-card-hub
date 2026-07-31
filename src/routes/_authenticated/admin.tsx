@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Header } from "@/components/site/header";
+import { CollectionGroupsAdmin } from "@/components/admin/collection-groups-admin";
+
 import { getSettings, getStats, listPokemons, type CardStatus } from "@/lib/collection.functions";
 import { amIAdmin, listContactLog, updateCardStatus, updateSetting } from "@/lib/admin.functions";
 import { STATUS_OPTIONS, padDex } from "@/lib/status";
