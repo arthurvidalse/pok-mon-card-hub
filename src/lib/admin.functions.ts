@@ -5,12 +5,12 @@ import type { CardStatus, PokemonRow } from "./collection.functions";
 export const amIAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase.rpc("is_admin", { _user_id: context.userId });
+    const { data } = await context.supabase.rpc("is_admin");
     return { isAdmin: Boolean(data), userId: context.userId };
   });
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data } = await context.supabase.rpc("is_admin", { _user_id: context.userId });
+  const { data } = await context.supabase.rpc("is_admin");
   if (!data) throw new Error("Acesso restrito ao administrador.");
 }
 
