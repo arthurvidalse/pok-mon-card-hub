@@ -8,7 +8,7 @@ import { WhatsAppFab } from "@/components/site/whatsapp-fab";
 import { PokemonCard } from "@/components/collection/pokemon-card";
 import { useReveal } from "@/hooks/use-reveal";
 import { getRecentAchievements, getSettings, getStats } from "@/lib/collection.functions";
-import heroAsset from "@/assets/hero-trainer.png.asset.json";
+import heroAsset from "/src/assets/homepic.png";
 
 const statsQuery = queryOptions({ queryKey: ["stats"], queryFn: () => getStats() });
 const recentQuery = queryOptions({ queryKey: ["recent"], queryFn: () => getRecentAchievements() });
@@ -82,7 +82,7 @@ function Home() {
 
             <div className="relative flex justify-center">
               <img
-                src={heroAsset.url}
+                src={heroAsset}
                 alt="Ilustração do colecionador com seus Pokémon"
                 className="w-full max-w-sm rounded-3xl drop-shadow-2xl md:max-w-md"
                 fetchPriority="high"

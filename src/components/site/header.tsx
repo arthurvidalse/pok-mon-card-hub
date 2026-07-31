@@ -9,7 +9,7 @@ export function Header() {
         <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
           <Sparkles className="size-5 text-accent" />
           <span>
-            Full Art <span className="text-primary">Hunt</span>
+            AV <span className="text-primary">Collectr</span>
           </span>
         </Link>
         <nav className="flex items-center gap-1 text-sm font-medium">

@@ -27,10 +27,10 @@ import { STATUS_OPTIONS, padDex } from "@/lib/status";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Painel do administrador — Full Art Hunt" },
+      { title: "Painel do administrador — AV Collectr" },
       { name: "description", content: "Gerencie o status das cartas Full Art da coleção Pokémon TCG." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Painel do administrador — Full Art Hunt" },
+      { property: "og:title", content: "Painel do administrador — AV Collectr" },
       { property: "og:description", content: "Gerencie o status das cartas da coleção." },
     ],
   }),

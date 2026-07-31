@@ -22,9 +22,9 @@ export const Route = createFileRoute("/pokemon/$dex")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Pokémon indisponível — Full Art Hunt" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Pokémon indisponível — AV Collectr" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `${loaderData.name} — Coleção Pokémon TCG Full Art`;
+    const title = `${loaderData.name} — AV Collectr`;
     const description = `Veja o status das cartas Full Art de ${loaderData.name} (Dex #${loaderData.dex}) na minha coleção e fale comigo no WhatsApp.`;
     return {
       meta: [
