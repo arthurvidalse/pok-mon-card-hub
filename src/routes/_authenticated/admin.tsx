@@ -251,7 +251,7 @@ function AdminPage() {
                 <div key={row.id} className="rounded-xl border bg-card px-3 py-2 text-sm">
                   <p className="font-medium">{row.reference_label}</p>
                   <p className="text-xs text-muted-foreground">
-                    {row.intent} · {new Date(row.created_at).toLocaleString("pt-BR")}
+                    {row.intent} · {new Date(row.sent_at).toLocaleString("pt-BR")}
                   </p>
                 </div>
               ))}

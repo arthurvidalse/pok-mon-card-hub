@@ -68,8 +68,8 @@ export const listContactLog = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("contact_messages")
-      .select("id,reference_label,intent,created_at")
-      .order("created_at", { ascending: false })
+      .select("id,reference_label,intent,sent_at")
+      .order("sent_at", { ascending: false })
       .limit(50);
     return data ?? [];
   });
