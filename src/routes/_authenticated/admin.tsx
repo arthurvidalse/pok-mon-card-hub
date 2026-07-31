@@ -153,9 +153,15 @@ function AdminPage() {
         <Tabs defaultValue="cartas" className="mt-6">
           <TabsList>
             <TabsTrigger value="cartas">Cartas</TabsTrigger>
+            <TabsTrigger value="colecoes">Coleções</TabsTrigger>
             <TabsTrigger value="contatos">Contatos</TabsTrigger>
             <TabsTrigger value="config">Configurações</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="colecoes" className="mt-4">
+            <CollectionGroupsAdmin enabled={adminQuery.data?.isAdmin === true} />
+          </TabsContent>
+
 
           <TabsContent value="cartas" className="mt-4">
             <div className="flex flex-col gap-3 sm:flex-row">
