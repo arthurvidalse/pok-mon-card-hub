@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ColecoesRouteImport } from './routes/colecoes'
+import { Route as PokemonDexRouteImport } from './routes/pokemon.$dex'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ColecoesRoute = ColecoesRouteImport.update({
+  id: '/colecoes',
+  path: '/colecoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PokemonDexRoute = PokemonDexRouteImport.update({
+  id: '/pokemon/$dex',
+  path: '/pokemon/$dex',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/colecoes': typeof ColecoesRoute
+  '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/colecoes': typeof ColecoesRoute
+  '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/colecoes': typeof ColecoesRoute
+  '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/colecoes' | '/pokemon/$dex'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/colecoes' | '/pokemon/$dex'
+  id: '__root__' | '/' | '/colecoes' | '/pokemon/$dex'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ColecoesRoute: typeof ColecoesRoute
+  PokemonDexRoute: typeof PokemonDexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +68,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/colecoes': {
+      id: '/colecoes'
+      path: '/colecoes'
+      fullPath: '/colecoes'
+      preLoaderRoute: typeof ColecoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pokemon/$dex': {
+      id: '/pokemon/$dex'
+      path: '/pokemon/$dex'
+      fullPath: '/pokemon/$dex'
+      preLoaderRoute: typeof PokemonDexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ColecoesRoute: ColecoesRoute,
+  PokemonDexRoute: PokemonDexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
