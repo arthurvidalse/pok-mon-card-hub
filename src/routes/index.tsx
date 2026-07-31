@@ -17,13 +17,13 @@ const settingsQuery = queryOptions({ queryKey: ["settings"], queryFn: () => getS
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Full Art Hunt — Coleção Pokémon TCG de cartas Full Art" },
+      { title: "AV Collectr — Coleção Pokémon TCG" },
       {
         name: "description",
         content:
           "Acompanhe minha coleção de cartas Pokémon TCG Full Art, veja o que já conquistei, o que ainda falta e fale comigo no WhatsApp para trocas e vendas.",
       },
-      { property: "og:title", content: "Full Art Hunt — Coleção Pokémon TCG" },
+      { property: "og:title", content: "AV Collectr — Coleção Pokémon TCG" },
       {
         property: "og:description",
         content: "Coleção de cartas Pokémon TCG Full Art: progresso em tempo real e contato direto por WhatsApp.",
@@ -138,7 +138,7 @@ function Home() {
       </main>
 
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        Coleção Pokémon TCG · Full Art Hunt
+        Coleção Pokémon TCG · AV Collectr
       </footer>
 
       <WhatsAppFab number={settings.whatsapp_number ?? ""} />

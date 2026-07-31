@@ -11,10 +11,10 @@ import { Header } from "@/components/site/header";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar — Full Art Hunt" },
+      { title: "Entrar — AV Collectr" },
       { name: "description", content: "Área de acesso do administrador da coleção Pokémon TCG Full Art." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Entrar — Full Art Hunt" },
+      { property: "og:title", content: "Entrar — AV Collectr" },
       { property: "og:description", content: "Acesso do administrador da coleção." },
     ],
   }),

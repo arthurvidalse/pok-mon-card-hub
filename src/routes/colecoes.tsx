@@ -36,13 +36,13 @@ export const Route = createFileRoute("/colecoes")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Coleções — Full Art Hunt Pokémon TCG" },
+      { title: "Coleções — AV Collectr Pokémon TCG" },
       {
         name: "description",
         content:
           "Escolha uma coleção temática e veja quais cartas Pokémon TCG Full Art eu já tenho, quais tenho só na versão comum e quais ainda faltam.",
       },
-      { property: "og:title", content: "Coleções — Full Art Hunt Pokémon TCG" },
+      { property: "og:title", content: "Coleções — AV Collectr Pokémon TCG" },
       {
         property: "og:description",
         content: "Escolha uma coleção e descubra quais cartas Full Art ainda faltam.",
