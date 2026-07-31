@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           card_number: string | null
           card_type: string | null
+          collection_group_id: string | null
           collection_id: string | null
           created_at: string
           id: string
@@ -31,6 +32,7 @@ export type Database = {
         Insert: {
           card_number?: string | null
           card_type?: string | null
+          collection_group_id?: string | null
           collection_id?: string | null
           created_at?: string
           id?: string
@@ -44,6 +46,7 @@ export type Database = {
         Update: {
           card_number?: string | null
           card_type?: string | null
+          collection_group_id?: string | null
           collection_id?: string | null
           created_at?: string
           id?: string
@@ -55,6 +58,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "cards_collection_group_id_fkey"
+            columns: ["collection_group_id"]
+            isOneToOne: false
+            referencedRelation: "collection_groups"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "cards_collection_id_fkey"
             columns: ["collection_id"]
@@ -70,6 +80,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      collection_groups: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          name: string
+          owned_count: number
+          slug: string
+          sort_order: number
+          total_expected: number
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name: string
+          owned_count?: number
+          slug: string
+          sort_order?: number
+          total_expected?: number
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name?: string
+          owned_count?: number
+          slug?: string
+          sort_order?: number
+          total_expected?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       collections: {
         Row: {
