@@ -103,6 +103,7 @@ export type ListInput = {
   status?: CardStatus | "todos";
   generation?: number | null;
   collectionId?: string | null;
+  groupId?: string | null;
   page?: number;
   pageSize?: number;
 };
@@ -114,16 +115,19 @@ export const listPokemons = createServerFn({ method: "GET" })
     const supabase = createPublicClient();
     const page = Math.max(0, data.page ?? 0);
     const pageSize = Math.min(60, data.pageSize ?? 24);
-    const filtered = data.status && data.status !== "todos";
+    const statusFiltered = data.status && data.status !== "todos";
+    const filtered = statusFiltered || Boolean(data.groupId) || Boolean(data.collectionId);
     const select = filtered
       ? SELECT.replace("cards(", "cards!inner(")
       : SELECT;
 
     let query = supabase.from("pokemons").select(select, { count: "exact" });
 
-    if (filtered) query = query.eq("cards.status", data.status as CardStatus);
+    if (statusFiltered) query = query.eq("cards.status", data.status as CardStatus);
     if (data.generation) query = query.eq("generation", data.generation);
     if (data.collectionId) query = query.eq("cards.collection_id", data.collectionId);
+    if (data.groupId) query = query.eq("cards.collection_group_id", data.groupId);
+
     if (data.search?.trim()) {
       const term = data.search.trim();
       const asNumber = Number(term);
