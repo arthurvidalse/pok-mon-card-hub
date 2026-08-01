@@ -16,8 +16,8 @@ export const STATUS_META: Record<CardStatus, { label: string; short: string; dot
   nao_tenho: {
     label: "Ainda não tenho nenhuma versão",
     short: "Não tenho",
-    dot: "bg-neutralcard",
-    chip: "bg-neutralcard/25 text-neutralcard-foreground border-neutralcard/40",
+    dot: "bg-destructive",
+    chip: "bg-destructive/15 text-destructive border-destructive/40",
   },
   nao_existe: {
     label: "Não existe Full Art",

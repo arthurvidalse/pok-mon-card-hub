@@ -43,7 +43,7 @@ export function PokemonCard({ pokemon, compact = false }: { pokemon: PokemonRow;
         "holo-card group flex flex-col rounded-2xl border-2 bg-card p-3 text-center",
         (status === "tenho_full_art" || status === "nao_existe") && "border-success/60",
         status === "tenho_comum" && "border-warning/60",
-        status === "nao_tenho" && "border-border",
+        status === "nao_tenho" && "border-destructive/60",
       )}
     >
       <span className="font-mono text-[11px] text-muted-foreground">{padDex(pokemon.dex_number)}</span>
