@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
-export type CardStatus = "tenho_full_art" | "tenho_comum" | "nao_tenho";
+export type CardStatus = "tenho_full_art" | "tenho_comum" | "nao_tenho" | "nao_existe";
 
 export type CardRow = {
   id: string;
@@ -80,7 +80,7 @@ export const getStats = createServerFn({ method: "GET" }).handler(async (): Prom
   const [pokemons, total, full, comum, nao] = await Promise.all([
     supabase.from("pokemons").select("id", { count: "exact", head: true }),
     supabase.from("cards").select("id", { count: "exact", head: true }),
-    supabase.from("cards").select("id", { count: "exact", head: true }).eq("status", "tenho_full_art"),
+    supabase.from("cards").select("id", { count: "exact", head: true }).in("status", ["tenho_full_art", "nao_existe"]),
     supabase.from("cards").select("id", { count: "exact", head: true }).eq("status", "tenho_comum"),
     supabase.from("cards").select("id", { count: "exact", head: true }).eq("status", "nao_tenho"),
   ]);
@@ -102,7 +102,7 @@ export const getRecentAchievements = createServerFn({ method: "GET" }).handler(a
   const { data } = await supabase
     .from("pokemons")
     .select(SELECT)
-    .eq("cards.status", "tenho_full_art")
+    .in("cards.status", ["tenho_full_art", "nao_existe"])
     .order("updated_at", { referencedTable: "cards", ascending: false })
     .limit(8);
   return (data ?? []).filter((p: any) => (p.cards ?? []).length > 0).map(mapPokemon).slice(0, 8);

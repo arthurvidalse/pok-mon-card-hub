@@ -1,4 +1,4 @@
-export type CardStatus = "tenho_full_art" | "tenho_comum" | "nao_tenho";
+export type CardStatus = "tenho_full_art" | "tenho_comum" | "nao_tenho" | "nao_existe";
 
 export const STATUS_META: Record<CardStatus, { label: string; short: string; dot: string; chip: string }> = {
   tenho_full_art: {
@@ -19,6 +19,12 @@ export const STATUS_META: Record<CardStatus, { label: string; short: string; dot
     dot: "bg-neutralcard",
     chip: "bg-neutralcard/25 text-neutralcard-foreground border-neutralcard/40",
   },
+  nao_existe: {
+    label: "Não existe Full Art",
+    short: "Não existe",
+    dot: "bg-success",
+    chip: "bg-success/15 text-success border-success/40",
+  },
 };
 
 export const STATUS_OPTIONS: { value: CardStatus | "todos"; label: string }[] = [
@@ -26,6 +32,7 @@ export const STATUS_OPTIONS: { value: CardStatus | "todos"; label: string }[] = 
   { value: "tenho_full_art", label: "Já tenho a Full Art" },
   { value: "tenho_comum", label: "Tenho só a comum" },
   { value: "nao_tenho", label: "Ainda não tenho" },
+  { value: "nao_existe", label: "Não existe Full Art" },
 ];
 
 export const GENERATIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];

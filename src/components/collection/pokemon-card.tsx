@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 function bestStatus(pokemon: PokemonRow) {
   if (pokemon.cards.some((c) => c.status === "tenho_full_art")) return "tenho_full_art" as const;
+  if (pokemon.cards.some((c) => c.status === "nao_existe")) return "nao_existe" as const;
   if (pokemon.cards.some((c) => c.status === "tenho_comum")) return "tenho_comum" as const;
   return "nao_tenho" as const;
 }
@@ -40,7 +41,7 @@ export function PokemonCard({ pokemon, compact = false }: { pokemon: PokemonRow;
       params={{ dex: String(pokemon.dex_number) }}
       className={cn(
         "holo-card group flex flex-col rounded-2xl border-2 bg-card p-3 text-center",
-        status === "tenho_full_art" && "border-success/60",
+        (status === "tenho_full_art" || status === "nao_existe") && "border-success/60",
         status === "tenho_comum" && "border-warning/60",
         status === "nao_tenho" && "border-border",
       )}

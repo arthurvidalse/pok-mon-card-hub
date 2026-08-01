@@ -69,7 +69,7 @@ export function PokemonDetail({
       <div className="grid gap-4 sm:grid-cols-2">
         {pokemon.cards.map((card) => {
           const meta = STATUS_META[card.status];
-          const wants = card.status !== "tenho_full_art";
+          const wants = card.status !== "tenho_full_art" && card.status !== "nao_existe";
           return (
             <article key={card.id} className="holo-card rounded-2xl border-2 bg-card p-4">
               <div className="flex items-start justify-between gap-2">

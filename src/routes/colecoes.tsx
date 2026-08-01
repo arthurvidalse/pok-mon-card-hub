@@ -25,7 +25,7 @@ import { GENERATIONS, STATUS_OPTIONS } from "@/lib/status";
 const searchSchema = z.object({
   grupo: z.string().optional(),
   q: z.string().optional(),
-  status: z.enum(["todos", "tenho_full_art", "tenho_comum", "nao_tenho"]).default("todos"),
+  status: z.enum(["todos", "tenho_full_art", "tenho_comum", "nao_tenho", "nao_existe"]).default("todos"),
   gen: z.coerce.number().optional(),
   view: z.enum(["grid", "list"]).default("grid"),
   page: z.coerce.number().default(0),

@@ -9,7 +9,7 @@ export function CustomCard({ card }: { card: CustomCardRow }) {
     <div
       className={cn(
         "holo-card group flex flex-col rounded-2xl border-2 bg-card p-3 text-center",
-        card.status === "tenho_full_art" && "border-success/60",
+        (card.status === "tenho_full_art" || card.status === "nao_existe") && "border-success/60",
         card.status === "tenho_comum" && "border-warning/60",
         card.status === "nao_tenho" && "border-border",
       )}
