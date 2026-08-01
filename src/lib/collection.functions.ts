@@ -99,13 +99,33 @@ export const getStats = createServerFn({ method: "GET" }).handler(async (): Prom
 export const getRecentAchievements = createServerFn({ method: "GET" }).handler(async (): Promise<PokemonRow[]> => {
   const { createPublicClient } = await import("./supabase-public.server");
   const supabase = createPublicClient();
-  const { data } = await supabase
+  
+  // Buscar as cartas mais recentes que não sejam "nao_tenho"
+  const { data: recentCards } = await supabase
+    .from("cards")
+    .select("pokemon_id")
+    .neq("status", "nao_tenho")
+    .order("updated_at", { ascending: false })
+    .limit(30);
+
+  if (!recentCards || recentCards.length === 0) return [];
+
+  // Deduplicar e pegar no máximo os últimos 8 pokémons distintos
+  const pokemonIds = Array.from(new Set(recentCards.map((c) => c.pokemon_id).filter(Boolean))).slice(0, 8);
+
+  if (pokemonIds.length === 0) return [];
+
+  // Buscar os dados completos desses pokémons
+  const { data: pokemons } = await supabase
     .from("pokemons")
     .select(SELECT)
-    .in("cards.status", ["tenho_full_art", "nao_existe"])
-    .order("updated_at", { referencedTable: "cards", ascending: false })
-    .limit(8);
-  return (data ?? []).filter((p: any) => (p.cards ?? []).length > 0).map(mapPokemon).slice(0, 8);
+    .in("id", pokemonIds);
+
+  // Ordenar os pokémons retornados na mesma ordem em que apareceram em recentCards
+  return (pokemons ?? [])
+    .filter((p: any) => (p.cards ?? []).length > 0)
+    .map(mapPokemon)
+    .sort((a, b) => pokemonIds.indexOf(a.id) - pokemonIds.indexOf(b.id));
 });
 
 export type ListInput = {
