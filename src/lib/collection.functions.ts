@@ -111,7 +111,9 @@ export const getRecentAchievements = createServerFn({ method: "GET" }).handler(a
   if (!recentCards || recentCards.length === 0) return [];
 
   // Deduplicar e pegar no máximo os últimos 8 pokémons distintos
-  const pokemonIds = Array.from(new Set(recentCards.map((c) => c.pokemon_id).filter(Boolean))).slice(0, 8);
+  const pokemonIds = Array.from(
+    new Set(recentCards.map((c) => c.pokemon_id).filter((id): id is string => Boolean(id))),
+  ).slice(0, 8);
 
   if (pokemonIds.length === 0) return [];
 
