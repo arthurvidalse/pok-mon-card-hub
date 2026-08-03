@@ -205,7 +205,10 @@
     opacity: var(--burst-opacity);
     pointer-events: none;
     transform-origin: 50% 42%;
-    animation: burst-spin 90s linear infinite;
+    animation:
+      burst-spin 90s linear infinite,
+      burst-pulse 9s ease-in-out infinite;
+
     mask-image: radial-gradient(70% 60% at 50% 42%, transparent 8%, black 45%);
   }
 
