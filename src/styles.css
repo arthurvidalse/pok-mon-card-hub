@@ -168,12 +168,17 @@
     border-color: var(--color-border);
   }
 
-  body {
+  html {
     background-color: var(--color-background);
+  }
+
+  body {
+    background-color: transparent;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     position: relative;
   }
+
 
   /* Comic-burst backdrop: radial speed rays + halftone dots */
   body::before {
