@@ -108,7 +108,13 @@
   --sidebar-accent-foreground: oklch(0.28 0.08 264);
   --sidebar-border: oklch(0.9 0.015 260);
   --sidebar-ring: oklch(0.45 0.19 264);
+  --burst-ray: oklch(0.78 0.18 55 / 30%);
+  --burst-core: oklch(0.86 0.16 70 / 45%);
+  --burst-dot: oklch(0.7 0.16 45 / 35%);
+  --burst-opacity: 0.5;
+  --burst-dot-opacity: 0.5;
 }
+
 
 .dark {
   --background: oklch(0.16 0.04 265);
