@@ -236,6 +236,72 @@
   }
 }
 
+@keyframes burst-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes burst-pulse {
+  0%,
+  100% {
+    opacity: calc(var(--burst-opacity) * 0.75);
+  }
+  50% {
+    opacity: var(--burst-opacity);
+  }
+}
+
+@keyframes halftone-drift {
+  to {
+    background-position: 140px 84px;
+  }
+}
+
+@keyframes aurora-float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(4%, -3%, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-3%, 3%, 0) scale(0.96);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Floating colored energy blobs behind everything */
+html::before {
+  content: "";
+  position: fixed;
+  inset: -10%;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      28% 28% at 18% 22%,
+      color-mix(in oklab, var(--color-primary) 32%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      26% 26% at 82% 18%,
+      color-mix(in oklab, var(--color-accent) 38%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      30% 30% at 70% 85%,
+      color-mix(in oklab, var(--color-success) 26%, transparent),
+      transparent 72%
+    );
+  filter: blur(40px);
+  animation: aurora-float 26s ease-in-out infinite;
+}
+
+
+
 
 @utility holo-card {
   position: relative;
