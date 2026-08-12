@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ColecoesRouteImport } from './routes/colecoes'
+import { Route as ProcuradasRouteImport } from './routes/procuradas'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as PokemonDexRouteImport } from './routes/pokemon.$dex'
 
@@ -35,6 +36,11 @@ const ColecoesRoute = ColecoesRouteImport.update({
   path: '/colecoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProcuradasRoute = ProcuradasRouteImport.update({
+  id: '/procuradas',
+  path: '/procuradas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/colecoes': typeof ColecoesRoute
+  '/procuradas': typeof ProcuradasRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
 }
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/colecoes': typeof ColecoesRoute
+  '/procuradas': typeof ProcuradasRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
 }
@@ -66,20 +74,23 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/colecoes': typeof ColecoesRoute
+  '/procuradas': typeof ProcuradasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/colecoes' | '/admin' | '/pokemon/$dex'
+  fullPaths:
+    '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/colecoes' | '/admin' | '/pokemon/$dex'
+  to: '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/colecoes'
+    | '/procuradas'
     | '/_authenticated/admin'
     | '/pokemon/$dex'
   fileRoutesById: FileRoutesById
@@ -89,6 +100,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ColecoesRoute: typeof ColecoesRoute
+  ProcuradasRoute: typeof ProcuradasRoute
   PokemonDexRoute: typeof PokemonDexRoute
 }
 
@@ -120,6 +132,13 @@ declare module '@tanstack/react-router' {
       path: '/colecoes'
       fullPath: '/colecoes'
       preLoaderRoute: typeof ColecoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/procuradas': {
+      id: '/procuradas'
+      path: '/procuradas'
+      fullPath: '/procuradas'
+      preLoaderRoute: typeof ProcuradasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -155,6 +174,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ColecoesRoute: ColecoesRoute,
+  ProcuradasRoute: ProcuradasRoute,
   PokemonDexRoute: PokemonDexRoute,
 }
 export const routeTree = rootRouteImport

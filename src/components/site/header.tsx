@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { Sparkles, UserRound } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
