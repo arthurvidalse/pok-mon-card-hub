@@ -28,6 +28,15 @@ export function Header() {
           >
             Coleções
           </Link>
+          <Link
+            to="/admin"
+            aria-label="Painel Admin"
+            title="Painel Admin"
+            className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            activeProps={{ className: "text-primary" }}
+          >
+            <UserRound className="size-5" />
+          </Link>
           <ThemeToggle />
         </nav>
       </div>
