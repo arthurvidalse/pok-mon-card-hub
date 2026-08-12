@@ -108,11 +108,6 @@
   --sidebar-accent-foreground: oklch(0.28 0.08 264);
   --sidebar-border: oklch(0.9 0.015 260);
   --sidebar-ring: oklch(0.45 0.19 264);
-  --burst-ray: oklch(0.78 0.18 55 / 30%);
-  --burst-core: oklch(0.86 0.16 70 / 45%);
-  --burst-dot: oklch(0.7 0.16 45 / 35%);
-  --burst-opacity: 0.5;
-  --burst-dot-opacity: 0.5;
 }
 
 
@@ -155,11 +150,6 @@
   --sidebar-accent-foreground: oklch(0.97 0.01 260);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.72 0.16 262);
-  --burst-ray: oklch(0.62 0.19 50 / 26%);
-  --burst-core: oklch(0.55 0.2 45 / 32%);
-  --burst-dot: oklch(0.75 0.16 60 / 22%);
-  --burst-opacity: 0.55;
-  --burst-dot-opacity: 0.45;
 }
 
 
@@ -173,61 +163,11 @@
   }
 
   body {
-    background-color: transparent;
+    background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    position: relative;
   }
 
-
-  /* Comic-burst backdrop: rotating speed rays + drifting halftone dots */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: -25%;
-    z-index: -2;
-    background:
-      repeating-conic-gradient(
-        from 0deg at 50% 42%,
-        color-mix(in oklab, var(--burst-ray) 100%, transparent) 0deg 1.6deg,
-        transparent 1.6deg 5deg
-      ),
-      repeating-conic-gradient(
-        from 2deg at 50% 42%,
-        color-mix(in oklab, var(--burst-core) 60%, transparent) 0deg 0.6deg,
-        transparent 0.6deg 12deg
-      ),
-      radial-gradient(
-        90% 80% at 50% 42%,
-        color-mix(in oklab, var(--burst-core) 100%, transparent) 0%,
-        transparent 60%
-      );
-    opacity: var(--burst-opacity);
-    pointer-events: none;
-    transform-origin: 50% 42%;
-    animation:
-      burst-spin 90s linear infinite,
-      burst-pulse 9s ease-in-out infinite;
-
-    mask-image: radial-gradient(70% 60% at 50% 42%, transparent 8%, black 45%);
-  }
-
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background-image:
-      radial-gradient(
-        color-mix(in oklab, var(--burst-dot) 100%, transparent) 1.2px,
-        transparent 1.3px
-      );
-    background-size: 14px 14px;
-    mask-image: radial-gradient(120% 100% at 50% 38%, transparent 26%, black 82%);
-    opacity: var(--burst-dot-opacity);
-    pointer-events: none;
-    animation: halftone-drift 24s linear infinite;
-  }
 
 
   h1,
@@ -239,69 +179,6 @@
   }
 }
 
-@keyframes burst-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes burst-pulse {
-  0%,
-  100% {
-    opacity: calc(var(--burst-opacity) * 0.75);
-  }
-  50% {
-    opacity: var(--burst-opacity);
-  }
-}
-
-@keyframes halftone-drift {
-  to {
-    background-position: 140px 84px;
-  }
-}
-
-@keyframes aurora-float {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  33% {
-    transform: translate3d(4%, -3%, 0) scale(1.08);
-  }
-  66% {
-    transform: translate3d(-3%, 3%, 0) scale(0.96);
-  }
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-/* Floating colored energy blobs behind everything */
-html::before {
-  content: "";
-  position: fixed;
-  inset: -10%;
-  z-index: -3;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      28% 28% at 18% 22%,
-      color-mix(in oklab, var(--color-primary) 32%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      26% 26% at 82% 18%,
-      color-mix(in oklab, var(--color-accent) 38%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      30% 30% at 70% 85%,
-      color-mix(in oklab, var(--color-success) 26%, transparent),
-      transparent 72%
-    );
-  filter: blur(40px);
-  animation: aurora-float 26s ease-in-out infinite;
-}
 
 
 
