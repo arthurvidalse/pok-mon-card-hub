@@ -163,61 +163,11 @@
   }
 
   body {
-    background-color: transparent;
+    background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    position: relative;
   }
 
-
-  /* Comic-burst backdrop: rotating speed rays + drifting halftone dots */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: -25%;
-    z-index: -2;
-    background:
-      repeating-conic-gradient(
-        from 0deg at 50% 42%,
-        color-mix(in oklab, var(--burst-ray) 100%, transparent) 0deg 1.6deg,
-        transparent 1.6deg 5deg
-      ),
-      repeating-conic-gradient(
-        from 2deg at 50% 42%,
-        color-mix(in oklab, var(--burst-core) 60%, transparent) 0deg 0.6deg,
-        transparent 0.6deg 12deg
-      ),
-      radial-gradient(
-        90% 80% at 50% 42%,
-        color-mix(in oklab, var(--burst-core) 100%, transparent) 0%,
-        transparent 60%
-      );
-    opacity: var(--burst-opacity);
-    pointer-events: none;
-    transform-origin: 50% 42%;
-    animation:
-      burst-spin 90s linear infinite,
-      burst-pulse 9s ease-in-out infinite;
-
-    mask-image: radial-gradient(70% 60% at 50% 42%, transparent 8%, black 45%);
-  }
-
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background-image:
-      radial-gradient(
-        color-mix(in oklab, var(--burst-dot) 100%, transparent) 1.2px,
-        transparent 1.3px
-      );
-    background-size: 14px 14px;
-    mask-image: radial-gradient(120% 100% at 50% 38%, transparent 26%, black 82%);
-    opacity: var(--burst-dot-opacity);
-    pointer-events: none;
-    animation: halftone-drift 24s linear infinite;
-  }
 
 
   h1,
