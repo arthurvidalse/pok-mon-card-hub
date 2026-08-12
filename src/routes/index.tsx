@@ -78,8 +78,8 @@ function Home() {
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link to="/admin">
-                    Painel Admin
+                  <Link to="/procuradas">
+                    Cartas que procuro
                   </Link>
                 </Button>
               </div>
