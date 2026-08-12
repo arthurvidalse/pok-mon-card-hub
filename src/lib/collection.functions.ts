@@ -245,3 +245,44 @@ export const listCustomCards = createServerFn({ method: "GET" })
     const { data: rows } = await query.order("card_number", { ascending: true });
     return (rows ?? []) as unknown as CustomCardRow[];
   });
+
+export type WantedPokemon = {
+  id: string;
+  dex_number: number;
+  name: string;
+  sprite_url: string | null;
+};
+
+/** Pokémon sem nenhuma versão na coleção: todas as cartas com status "nao_tenho". */
+export const listWantedPokemons = createServerFn({ method: "GET" }).handler(
+  async (): Promise<WantedPokemon[]> => {
+    const { createPublicClient } = await import("./supabase-public.server");
+    const supabase = createPublicClient();
+
+    const owned = new Set<string>();
+    const CHUNK = 1000;
+    for (let from = 0; ; from += CHUNK) {
+      const { data } = await supabase
+        .from("cards")
+        .select("pokemon_id,status")
+        .neq("status", "nao_tenho")
+        .not("pokemon_id", "is", null)
+        .range(from, from + CHUNK - 1);
+      for (const row of data ?? []) if (row.pokemon_id) owned.add(row.pokemon_id);
+      if (!data || data.length < CHUNK) break;
+    }
+
+    const all: WantedPokemon[] = [];
+    for (let from = 0; ; from += CHUNK) {
+      const { data } = await supabase
+        .from("pokemons")
+        .select("id,dex_number,name,sprite_url")
+        .order("dex_number", { ascending: true })
+        .range(from, from + CHUNK - 1);
+      for (const row of data ?? []) if (!owned.has(row.id)) all.push(row as WantedPokemon);
+      if (!data || data.length < CHUNK) break;
+    }
+
+    return all;
+  },
+);
