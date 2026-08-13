@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PokemonBackground } from "@/components/site/pokemon-background";
 import {
   Outlet,
   createRootRouteWithContext,
@@ -117,6 +118,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <PokemonBackground />
       <Outlet />
       <Toaster />
     </QueryClientProvider>
