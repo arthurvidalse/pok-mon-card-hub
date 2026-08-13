@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      binder_cards: {
+        Row: {
+          binder_id: string
+          card_name: string | null
+          condition: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          notes: string | null
+          position: number
+          price: number | null
+          set_name: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          binder_id: string
+          card_name?: string | null
+          condition?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          notes?: string | null
+          position: number
+          price?: number | null
+          set_name?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          binder_id?: string
+          card_name?: string | null
+          condition?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          notes?: string | null
+          position?: number
+          price?: number | null
+          set_name?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "binder_cards_binder_id_fkey"
+            columns: ["binder_id"]
+            isOneToOne: false
+            referencedRelation: "binders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      binders: {
+        Row: {
+          cols: number
+          created_at: string
+          description: string | null
+          id: string
+          is_visible: boolean
+          rows: number
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cols?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_visible?: boolean
+          rows?: number
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cols?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_visible?: boolean
+          rows?: number
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           card_number: string | null

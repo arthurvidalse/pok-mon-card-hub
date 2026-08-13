@@ -16,6 +16,8 @@ import { Route as ColecoesRouteImport } from './routes/colecoes'
 import { Route as ProcuradasRouteImport } from './routes/procuradas'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as PokemonDexRouteImport } from './routes/pokemon.$dex'
+import { Route as BindersRouteImport } from './routes/binders'
+import { Route as BinderSlugRouteImport } from './routes/binder.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +53,16 @@ const PokemonDexRoute = PokemonDexRouteImport.update({
   path: '/pokemon/$dex',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BindersRoute = BindersRouteImport.update({
+  id: '/binders',
+  path: '/binders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BinderSlugRoute = BinderSlugRouteImport.update({
+  id: '/binder/$slug',
+  path: '/binder/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +71,8 @@ export interface FileRoutesByFullPath {
   '/procuradas': typeof ProcuradasRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
+  '/binders': typeof BindersRoute
+  '/binder/$slug': typeof BinderSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +81,8 @@ export interface FileRoutesByTo {
   '/procuradas': typeof ProcuradasRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
+  '/binders': typeof BindersRoute
+  '/binder/$slug': typeof BinderSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,13 +93,15 @@ export interface FileRoutesById {
   '/procuradas': typeof ProcuradasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
+  '/binders': typeof BindersRoute
+  '/binder/$slug': typeof BinderSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex'
+    '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex' | '/binders' | '/binder/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex'
+  to: '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex' | '/binders' | '/binder/$slug'
   id:
     | '__root__'
     | '/'
@@ -93,6 +111,8 @@ export interface FileRouteTypes {
     | '/procuradas'
     | '/_authenticated/admin'
     | '/pokemon/$dex'
+    | '/binders'
+    | '/binder/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -102,6 +122,8 @@ export interface RootRouteChildren {
   ColecoesRoute: typeof ColecoesRoute
   ProcuradasRoute: typeof ProcuradasRoute
   PokemonDexRoute: typeof PokemonDexRoute
+  BindersRoute: typeof BindersRoute
+  BinderSlugRoute: typeof BinderSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -155,6 +177,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PokemonDexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/binders': {
+      id: '/binders'
+      path: '/binders'
+      fullPath: '/binders'
+      preLoaderRoute: typeof BindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/binder/$slug': {
+      id: '/binder/$slug'
+      path: '/binder/$slug'
+      fullPath: '/binder/$slug'
+      preLoaderRoute: typeof BinderSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -176,6 +212,8 @@ const rootRouteChildren: RootRouteChildren = {
   ColecoesRoute: ColecoesRoute,
   ProcuradasRoute: ProcuradasRoute,
   PokemonDexRoute: PokemonDexRoute,
+  BindersRoute: BindersRoute,
+  BinderSlugRoute: BinderSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
