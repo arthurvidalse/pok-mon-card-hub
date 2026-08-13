@@ -19,7 +19,7 @@ export type Database = {
           binder_id: string
           card_name: string | null
           condition: string | null
-          created_at: string
+          created_at: string | null
           id: string
           image_url: string | null
           notes: string | null
@@ -27,13 +27,13 @@ export type Database = {
           price: number | null
           set_name: string | null
           status: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           binder_id: string
           card_name?: string | null
           condition?: string | null
-          created_at?: string
+          created_at?: string | null
           id?: string
           image_url?: string | null
           notes?: string | null
@@ -41,13 +41,13 @@ export type Database = {
           price?: number | null
           set_name?: string | null
           status?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           binder_id?: string
           card_name?: string | null
           condition?: string | null
-          created_at?: string
+          created_at?: string | null
           id?: string
           image_url?: string | null
           notes?: string | null
@@ -55,7 +55,7 @@ export type Database = {
           price?: number | null
           set_name?: string | null
           status?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -70,7 +70,7 @@ export type Database = {
       binders: {
         Row: {
           cols: number
-          created_at: string
+          created_at: string | null
           description: string | null
           id: string
           is_visible: boolean
@@ -78,11 +78,11 @@ export type Database = {
           slug: string
           sort_order: number
           title: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           cols?: number
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           is_visible?: boolean
@@ -90,11 +90,11 @@ export type Database = {
           slug: string
           sort_order?: number
           title: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           cols?: number
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           is_visible?: boolean
@@ -102,7 +102,7 @@ export type Database = {
           slug?: string
           sort_order?: number
           title?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
