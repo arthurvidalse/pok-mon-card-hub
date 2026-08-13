@@ -159,11 +159,11 @@
   }
 
   html {
-    background-color: var(--color-background);
+    background: transparent;
   }
 
   body {
-    background-color: var(--color-background);
+    background: transparent;
     color: var(--color-foreground);
     font-family: var(--font-sans);
   }

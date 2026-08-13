@@ -61,7 +61,7 @@ export function PokemonBackground() {
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 overflow-hidden"
-      style={{ zIndex: -1 }}
+      style={{ zIndex: -1, backgroundColor: "var(--background)" }}
     >
       <div ref={containerRef} className="absolute inset-0" />
 
