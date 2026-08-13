@@ -1,56 +1,50 @@
-## Objetivo
+# Correções e melhorias nos Binders
 
-Site em português para divulgar e gerenciar sua coleção de cartas Pokémon TCG (foco Full Art), com área pública e painel admin, alimentado pelos dados reais da sua planilha (1025 Pokémon: 119 Full Art, 468 só comum, 438 não tenho).
+## 1. Binder visível não aparece na página pública
 
-## Backend (Lovable Cloud)
+Causa confirmada: a leitura pública das tabelas `binders` / `binder_cards` falha com o erro
+"permission denied for function is_admin". A regra de acesso de administrador dessas duas tabelas
+vale para todos os visitantes (inclusive anônimos), e o banco tenta executar a função de checagem
+de admin mesmo para quem não está logado — o que derruba a consulta inteira. Nas outras tabelas do
+site a regra de admin está limitada a usuários autenticados, por isso só os binders quebram.
 
-Tabelas:
-- `pokemons` — id, dex_number, name, sprite_url (PokeAPI oficial por número da Dex), created_at
-- `collections` — id, name, code, release_year, language
-- `cards` — id, pokemon_id, collection_id (opcional), card_number, card_type, image_url, status (`tenho_full_art` | `tenho_comum` | `nao_tenho`), is_target, notes, updated_at
-- `contact_messages` — id, card_id/pokemon_id, nome_do_visitante, enviado_em
-- `site_settings` — número do WhatsApp e outros ajustes editáveis pelo admin
-- `user_roles` + função `has_role` — controle de admin (sem cadastro público)
+Correção: recriar as regras de acesso dos binders no mesmo padrão do resto do site — regra de
+administrador apenas para usuários autenticados, e leitura pública liberada para visitantes
+(binders visíveis e cartas de binders visíveis). Nada muda no que é exposto: binders ocultos
+continuam invisíveis para o público.
 
-Segurança: leitura pública apenas de dados de coleção; escrita somente para admin. Registro de clique no WhatsApp permitido de forma anônima e controlada.
+## 2. Slots grandes demais / rolagem em binders pequenos
 
-Seed: migração com os 1025 Pokémon e o status de cada um vindos da sua planilha (nada inventado). Sprites via URL oficial da PokeAPI.
+Na página pública e no admin a grade usa a largura toda, então um binder 2x2 gera cartas gigantes.
 
-Admin: seu e-mail (arthurvidalmaia@gmail.com) recebe o papel de admin no primeiro login.
+- Limitar a largura da grade conforme o número de colunas (carta com largura máxima ~200px),
+  centralizando o álbum na tela.
+- Garantir que a página inteira do binder caiba na altura da janela sempre que possível
+  (altura da carta calculada a partir do espaço disponível, mantendo a proporção 2:3).
+- No admin, mesma regra, com a grade em um painel de tamanho estável.
 
-## Páginas públicas
+## 3. Binder com várias páginas (folhas)
 
-1. **Home** — hero com sua ilustração Team Rocket como imagem principal, título de impacto, frase curta e CTA para as coleções; estatísticas calculadas ao vivo (total, % completo, Full Arts, faltantes); seção "Últimas conquistas"; animações de scroll reveal, parallax leve e brilho holográfico sutil no hover — otimizadas para mobile.
-2. **Coleções** — ordem da Pokédex, cards com sprite, nº, nome e status por cor (verde/amarelo/cinza); busca por nome/número; filtros por status, coleção e geração; barras de progresso; alternância grade/lista compacta; scroll infinito/paginação e skeletons.
-3. **Detalhe da carta (modal + rota compartilhável)** — imagem grande, coleção, número, tipo, botões de WhatsApp contextuais e botão de copiar link.
+Hoje o binder tem só uma folha (linhas × colunas). Passa a ter páginas ilimitadas:
 
-WhatsApp: botão flutuante em todo o site e botões por carta, abrindo `wa.me/5584999693459` com mensagem pré-preenchida (nome do Pokémon, coleção e número). Cada clique registra uma linha em `contact_messages`. O número fica editável no admin.
-
-## Painel admin (`/admin`, protegido)
-
-- Login por e-mail/senha, sem cadastro público
-- Dashboard: totais, faltantes, atividade recente e cartas mais procuradas (cliques no WhatsApp)
-- CRUD de Pokémon, coleções e cartas; troca rápida de status; upload de imagem da carta ou link
-- Importação/atualização em massa por CSV/XLSX com mapeamento das colunas (Dex #, Nome, Status, Coleção, Número, Link da Carta, Observações)
-- Configuração do número de WhatsApp
-
-Alterações refletem imediatamente na área pública.
-
-## Design
-
-Paleta vibrante inspirada no TCG (energia elétrica/azul profundo com destaques dourados), tipografia de colecionável para títulos e leitura limpa no corpo, cantos arredondados de carta, brilho holográfico contido, modo claro/escuro. Áreas reservadas para você trocar artes/banners depois.
+- Novo campo `pages` no binder (padrão 1), editável no admin, com botões "adicionar folha" e
+  "remover última folha" (só permite remover folha vazia).
+- Cada carta continua guardada por `position`, agora interpretada como índice global:
+  `posição = (página - 1) × (linhas × colunas) + slot`. As cartas já cadastradas continuam
+  válidas (ficam na página 1).
+- Página pública: navegação de folhas com setas "anterior / próxima", indicador "Folha 2 de 5",
+  atalho pelo teclado (setas) e arraste/swipe no celular, com animação de virada de página.
+  A folha atual também vai para a URL (`?folha=2`) para poder compartilhar.
+- Admin: mesmo seletor de folhas ao editar as cartas, para preencher slot por slot em cada folha.
 
 ## Detalhes técnicos
 
-- TanStack Start + TanStack Query; leituras públicas via server functions com chave publicável, escrita admin via funções autenticadas
-- Rotas: `/`, `/colecoes`, `/carta/$id`, `/auth`, `/admin/*`
-- SEO: `head()` próprio por rota com título e descrição dinâmicos
-- Componentização por domínio (`components/collection`, `components/admin`, `lib/*.functions.ts`) para facilitar evoluções
-
-## Entrega em etapas
-
-1. Banco + importação da planilha real
-2. Landing page com estatísticas reais
-3. Página de coleções com filtros e detalhe de carta
-4. WhatsApp + log de contatos
-5. Autenticação e painel admin com importação por planilha
+- Migração: `ALTER TABLE public.binders ADD COLUMN pages integer NOT NULL DEFAULT 1`, mais
+  `DROP POLICY`/`CREATE POLICY` das quatro políticas de `binders` e `binder_cards`
+  (admin `TO authenticated`, leitura `TO anon, authenticated`).
+- `binders.functions.ts` / `binders-admin.functions.ts`: incluir `pages` no select e no
+  `saveBinder`; validar `pages >= 1`.
+- `src/routes/binder.$slug.tsx`: `validateSearch` com `folha` (fallback 1), grade por página,
+  controles de navegação e limite de largura/altura.
+- `src/routes/_authenticated/admin.tsx` (aba Binders): campo de páginas, seletor de folha e
+  mesmo dimensionamento de grade.
