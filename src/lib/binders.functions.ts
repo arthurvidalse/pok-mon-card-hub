@@ -22,12 +22,13 @@ export type Binder = {
   description: string | null;
   rows: number;
   cols: number;
+  pages: number;
   is_visible: boolean;
   sort_order: number;
   cards?: BinderCard[];
 };
 
-const BINDER_SELECT = "id,title,slug,description,rows,cols,is_visible,sort_order";
+const BINDER_SELECT = "id,title,slug,description,rows,cols,pages,is_visible,sort_order";
 
 /** Lista binders visíveis para o público */
 export const listBinders = createServerFn({ method: "GET" }).handler(

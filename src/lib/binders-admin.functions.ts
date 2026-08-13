@@ -7,7 +7,7 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
   if (!data) throw new Error("Acesso restrito ao administrador.");
 }
 
-const BINDER_SELECT = "id,title,slug,description,rows,cols,is_visible,sort_order";
+const BINDER_SELECT = "id,title,slug,description,rows,cols,pages,is_visible,sort_order";
 
 /** Admin: lista todos os binders (incluindo ocultos) */
 export const listAllBinders = createServerFn({ method: "GET" })
@@ -28,6 +28,7 @@ export type BinderInput = {
   description?: string | null;
   rows: number;
   cols: number;
+  pages: number;
   is_visible: boolean;
   sort_order: number;
 };
@@ -45,6 +46,7 @@ export const saveBinder = createServerFn({ method: "POST" })
       description: data.description?.trim() || null,
       rows: Math.max(1, Math.trunc(data.rows)),
       cols: Math.max(1, Math.trunc(data.cols)),
+      pages: Math.max(1, Math.trunc(data.pages ?? 1)),
       is_visible: data.is_visible,
       sort_order: Math.trunc(data.sort_order),
       updated_at: new Date().toISOString(),
