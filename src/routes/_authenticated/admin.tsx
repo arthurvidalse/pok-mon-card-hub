@@ -631,6 +631,7 @@ type BinderDraft = {
   description: string;
   rows: number;
   cols: number;
+  pages: number;
   is_visible: boolean;
   sort_order: number;
 };
@@ -642,6 +643,7 @@ const EMPTY_BINDER: BinderDraft = {
   description: "",
   rows: 3,
   cols: 4,
+  pages: 1,
   is_visible: false,
   sort_order: 0,
 };
@@ -701,6 +703,7 @@ function BindersAdmin({ enabled }: { enabled: boolean }) {
       description: binder.description ?? "",
       rows: binder.rows,
       cols: binder.cols,
+      pages: binder.pages ?? 1,
       is_visible: binder.is_visible,
       sort_order: binder.sort_order,
     });
@@ -747,6 +750,7 @@ function BindersAdmin({ enabled }: { enabled: boolean }) {
           description: binder.description,
           rows: binder.rows,
           cols: binder.cols,
+          pages: binder.pages ?? 1,
           is_visible: !binder.is_visible,
           sort_order: binder.sort_order,
         },
@@ -830,6 +834,16 @@ function BindersAdmin({ enabled }: { enabled: boolean }) {
               onChange={(e) => setDraft((d) => ({ ...d, cols: Number(e.target.value) }))}
             />
           </div>
+          <div className="space-y-1">
+            <Label htmlFor="b-pages">Folhas (páginas)</Label>
+            <Input
+              id="b-pages"
+              type="number"
+              min={1}
+              value={draft.pages}
+              onChange={(e) => setDraft((d) => ({ ...d, pages: Number(e.target.value) }))}
+            />
+          </div>
           <div className="space-y-1 sm:col-span-2">
             <Label htmlFor="b-desc">Descrição (opcional)</Label>
             <Input
@@ -879,7 +893,7 @@ function BindersAdmin({ enabled }: { enabled: boolean }) {
                 <div className="min-w-40 flex-1">
                   <p className="font-medium">{binder.title}</p>
                   <p className="text-xs text-muted-foreground">
-                    /binder/{binder.slug} · {binder.rows} × {binder.cols}
+                    /binder/{binder.slug} · {binder.rows} × {binder.cols} · {binder.pages ?? 1} folha(s)
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

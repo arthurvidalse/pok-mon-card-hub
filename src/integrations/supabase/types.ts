@@ -74,6 +74,7 @@ export type Database = {
           description: string | null
           id: string
           is_visible: boolean
+          pages: number
           rows: number
           slug: string
           sort_order: number
@@ -86,6 +87,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_visible?: boolean
+          pages?: number
           rows?: number
           slug: string
           sort_order?: number
@@ -98,6 +100,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_visible?: boolean
+          pages?: number
           rows?: number
           slug?: string
           sort_order?: number
