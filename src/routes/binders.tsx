@@ -70,7 +70,11 @@ function BindersPage() {
 }
 
 function BinderCard({ binder }: { binder: Binder }) {
-  const totalSlots = binder.rows * binder.cols;
+  const slots = binder.rows * binder.cols;
+  const cols = Math.min(binder.cols, 4);
+  const previewCount = Math.min(slots, cols * 2);
+  const byPos = new Map((binder.cards ?? []).map((c) => [c.position, c]));
+  const filled = (binder.cards ?? []).filter((c) => c.image_url).length;
 
   return (
     <Link
@@ -78,17 +82,28 @@ function BinderCard({ binder }: { binder: Binder }) {
       params={{ slug: binder.slug }}
       className="group flex flex-col rounded-2xl border bg-card p-5 text-left transition-all duration-200 hover:border-primary hover:shadow-lg"
     >
-      {/* Miniatura da grade */}
+      {/* Capa: preview das cartas da primeira folha */}
       <div
-        className="mb-4 grid gap-1"
-        style={{ gridTemplateColumns: `repeat(${Math.min(binder.cols, 4)}, 1fr)` }}
+        className="mb-4 grid gap-1.5 rounded-xl bg-secondary/30 p-1.5"
+        style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
       >
-        {Array.from({ length: Math.min(totalSlots, 8) }).map((_, i) => (
-          <div
-            key={i}
-            className="aspect-[2/3] rounded-sm border border-dashed border-border/50 bg-secondary/40 transition-colors group-hover:border-primary/30"
-          />
-        ))}
+        {Array.from({ length: previewCount }).map((_, i) => {
+          const card = byPos.get(i);
+          return card?.image_url ? (
+            <img
+              key={i}
+              src={card.image_url}
+              alt={card.card_name ?? "Carta do binder"}
+              loading="lazy"
+              className="aspect-[2/3] w-full rounded-md object-cover shadow-sm transition-transform duration-200 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div
+              key={i}
+              className="aspect-[2/3] rounded-md border border-dashed border-border/60 bg-card/40 transition-colors group-hover:border-primary/30"
+            />
+          );
+        })}
       </div>
 
       {/* Info */}
@@ -98,6 +113,7 @@ function BinderCard({ binder }: { binder: Binder }) {
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Grade {binder.rows} × {binder.cols} · {Math.max(1, binder.pages ?? 1)} folha(s)
+          {filled > 0 ? ` · ${filled} carta(s) na capa` : ""}
         </p>
 
         {binder.description ? (
@@ -107,3 +123,4 @@ function BinderCard({ binder }: { binder: Binder }) {
     </Link>
   );
 }
+
