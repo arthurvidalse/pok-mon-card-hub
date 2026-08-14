@@ -97,8 +97,9 @@ function BinderCard({ binder }: { binder: Binder }) {
           {binder.title}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Grade {binder.rows} × {binder.cols} · {totalSlots} slots
+          Grade {binder.rows} × {binder.cols} · {Math.max(1, binder.pages ?? 1)} folha(s)
         </p>
+
         {binder.description ? (
           <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{binder.description}</p>
         ) : null}
