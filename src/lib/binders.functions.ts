@@ -30,7 +30,7 @@ export type Binder = {
 
 const BINDER_SELECT = "id,title,slug,description,rows,cols,pages,is_visible,sort_order";
 
-/** Lista binders visíveis para o público */
+/** Lista binders visíveis para o público, com as cartas da primeira folha (capa) */
 export const listBinders = createServerFn({ method: "GET" }).handler(
   async (): Promise<Binder[]> => {
     const { createPublicClient } = await import("./supabase-public.server");
@@ -40,9 +40,35 @@ export const listBinders = createServerFn({ method: "GET" }).handler(
       .select(BINDER_SELECT)
       .eq("is_visible", true)
       .order("sort_order", { ascending: true });
-    return (data ?? []) as Binder[];
+
+    const binders = (data ?? []) as Binder[];
+    if (binders.length === 0) return binders;
+
+    const maxSlots = Math.max(...binders.map((b) => b.rows * b.cols), 1);
+    const { data: cards } = await supabase
+      .from("binder_cards")
+      .select("id,binder_id,position,card_name,image_url,set_name,condition,price,status,notes")
+      .in(
+        "binder_id",
+        binders.map((b) => b.id),
+      )
+      .lt("position", maxSlots)
+      .order("position", { ascending: true });
+
+    const byBinder = new Map<string, BinderCard[]>();
+    for (const c of (cards ?? []) as BinderCard[]) {
+      const list = byBinder.get(c.binder_id) ?? [];
+      list.push(c);
+      byBinder.set(c.binder_id, list);
+    }
+
+    return binders.map((b) => ({
+      ...b,
+      cards: (byBinder.get(b.id) ?? []).filter((c) => c.position < b.rows * b.cols),
+    }));
   },
 );
+
 
 /** Busca um binder por slug, com todas as cartas */
 export const getBinder = createServerFn({ method: "GET" })
