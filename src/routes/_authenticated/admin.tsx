@@ -677,6 +677,8 @@ function BindersAdmin({ enabled }: { enabled: boolean }) {
   const [saving, setSaving] = useState(false);
   const [selectedBinder, setSelectedBinder] = useState<Binder | null>(null);
   const [slotEdit, setSlotEdit] = useState<SlotEditState | null>(null);
+  const [sheet, setSheet] = useState(0);
+
 
   const bindersQuery = useQuery({
     queryKey: ["admin-binders"],
