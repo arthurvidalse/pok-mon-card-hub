@@ -930,56 +930,89 @@ function BindersAdmin({ enabled }: { enabled: boolean }) {
               {/* Grade de slots */}
               {selectedBinder?.id === binder.id && (
                 <div className="border-t p-4">
-                  {cardsQuery.isLoading ? (
-                    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${binder.cols}, minmax(0, 1fr))` }}>
-                      {Array.from({ length: binder.rows * binder.cols }).map((_, i) => (
-                        <Skeleton key={i} className="aspect-[2/3] rounded-lg" />
-                      ))}
-                    </div>
-                  ) : (
-                    <div
-                      className="grid gap-2"
-                      style={{ gridTemplateColumns: `repeat(${binder.cols}, minmax(0, 1fr))` }}
-                    >
-                      {Array.from({ length: binder.rows * binder.cols }).map((_, pos) => {
-                        const card = cardsByPos.get(pos);
-                        return (
-                          <button
-                            key={pos}
-                            type="button"
-                            onClick={() =>
-                              setSlotEdit({ binderId: binder.id, position: pos, existing: card ?? null })
-                            }
-                            className={`aspect-[2/3] overflow-hidden rounded-lg border-2 transition-all ${
-                              card
-                                ? "border-primary/40 bg-card hover:border-primary"
-                                : "border-dashed border-border/60 bg-card/40 hover:border-primary/50"
-                            }`}
+                  {(() => {
+                    const totalPages = Math.max(1, binder.pages ?? 1);
+                    const slots = binder.rows * binder.cols;
+                    const current = Math.min(sheet, totalPages - 1);
+                    const gridStyle = {
+                      gridTemplateColumns: `repeat(${binder.cols}, minmax(0, 1fr))`,
+                      maxWidth: `${binder.cols * 150}px`,
+                    } as const;
+                    return (
+                      <>
+                        <div className="mb-3 flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={current <= 0}
+                            onClick={() => setSheet(current - 1)}
                           >
-                            {card ? (
-                              card.image_url ? (
-                                <img
-                                  src={card.image_url}
-                                  alt={card.card_name ?? ""}
-                                  className="h-full w-full object-cover"
-                                />
-                              ) : (
-                                <div className="flex h-full items-center justify-center p-1 text-center text-[10px] text-muted-foreground">
-                                  {card.card_name ?? "Sem imagem"}
-                                </div>
-                              )
-                            ) : (
-                              <div className="flex h-full items-center justify-center text-muted-foreground/40">
-                                <Plus className="size-4" />
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                            Anterior
+                          </Button>
+                          <span className="text-xs text-muted-foreground">
+                            Folha {current + 1} de {totalPages}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={current + 1 >= totalPages}
+                            onClick={() => setSheet(current + 1)}
+                          >
+                            Próxima
+                          </Button>
+                        </div>
+                        {cardsQuery.isLoading ? (
+                          <div className="grid gap-2" style={gridStyle}>
+                            {Array.from({ length: slots }).map((_, i) => (
+                              <Skeleton key={i} className="aspect-[2/3] rounded-lg" />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="grid gap-2" style={gridStyle}>
+                            {Array.from({ length: slots }).map((_, i) => {
+                              const pos = current * slots + i;
+                              const card = cardsByPos.get(pos);
+                              return (
+                                <button
+                                  key={pos}
+                                  type="button"
+                                  onClick={() =>
+                                    setSlotEdit({ binderId: binder.id, position: pos, existing: card ?? null })
+                                  }
+                                  className={`aspect-[2/3] overflow-hidden rounded-lg border-2 transition-all ${
+                                    card
+                                      ? "border-primary/40 bg-card hover:border-primary"
+                                      : "border-dashed border-border/60 bg-card/40 hover:border-primary/50"
+                                  }`}
+                                >
+                                  {card ? (
+                                    card.image_url ? (
+                                      <img
+                                        src={card.image_url}
+                                        alt={card.card_name ?? ""}
+                                        className="h-full w-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="flex h-full items-center justify-center p-1 text-center text-[10px] text-muted-foreground">
+                                        {card.card_name ?? "Sem imagem"}
+                                      </div>
+                                    )
+                                  ) : (
+                                    <div className="flex h-full items-center justify-center text-muted-foreground/40">
+                                      <Plus className="size-4" />
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               )}
+
             </div>
           ))}
         </div>
