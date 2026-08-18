@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Header } from "@/components/site/header";
 import { CollectionGroupsAdmin } from "@/components/admin/collection-groups-admin";
+import { BulkAdmin } from "@/components/admin/bulk-admin";
 
 import { getSettings, getStats, listPokemons, listCustomCards, type CardStatus, type CustomCardRow } from "@/lib/collection.functions";
 import { amIAdmin, listContactLog, updateCardStatus, updateSetting, createCard, createCustomCard, deleteCard } from "@/lib/admin.functions";
@@ -182,6 +183,7 @@ function AdminPage() {
             <TabsTrigger value="cartas">Cartas (Pokédex)</TabsTrigger>
             <TabsTrigger value="extras">Cartas Extras</TabsTrigger>
             <TabsTrigger value="colecoes">Coleções</TabsTrigger>
+            <TabsTrigger value="bulk">Bulk</TabsTrigger>
             <TabsTrigger value="contatos">Contatos</TabsTrigger>
             <TabsTrigger value="config">Configurações</TabsTrigger>
           </TabsList>
@@ -195,6 +197,10 @@ function AdminPage() {
 
           <TabsContent value="colecoes" className="mt-4">
             <CollectionGroupsAdmin enabled={adminQuery.data?.isAdmin === true} />
+          </TabsContent>
+
+          <TabsContent value="bulk" className="mt-4">
+            <BulkAdmin enabled={adminQuery.data?.isAdmin === true} />
           </TabsContent>
 
 

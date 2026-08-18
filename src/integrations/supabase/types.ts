@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      bulk_cards: {
+        Row: {
+          id: string
+          set_id: string
+          set_name: string
+          local_id: string
+          card_name: string
+          image_url: string | null
+          rarity: string | null
+          condition: string
+          quantity: number
+          price_override: number | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          set_id: string
+          set_name: string
+          local_id: string
+          card_name: string
+          image_url?: string | null
+          rarity?: string | null
+          condition: string
+          quantity?: number
+          price_override?: number | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          set_id?: string
+          set_name?: string
+          local_id?: string
+          card_name?: string
+          image_url?: string | null
+          rarity?: string | null
+          condition?: string
+          quantity?: number
+          price_override?: number | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bulk_price_rules: {
+        Row: {
+          id: string
+          rarity: string
+          condition: string
+          price: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          rarity: string
+          condition: string
+          price: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          rarity?: string
+          condition?: string
+          price?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           card_number: string | null

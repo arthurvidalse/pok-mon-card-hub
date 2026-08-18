@@ -29,6 +29,13 @@ export function Header() {
             Coleções
           </Link>
           <Link
+            to="/bulk"
+            className="rounded-md px-3 py-2 transition-colors hover:bg-secondary"
+            activeProps={{ className: "text-primary" }}
+          >
+            Bulk
+          </Link>
+          <Link
             to="/admin"
             aria-label="Painel Admin"
             title="Painel Admin"

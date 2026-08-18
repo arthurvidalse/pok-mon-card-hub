@@ -14,8 +14,10 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ColecoesRouteImport } from './routes/colecoes'
 import { Route as ProcuradasRouteImport } from './routes/procuradas'
+import { Route as BulkRouteImport } from './routes/bulk'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as PokemonDexRouteImport } from './routes/pokemon.$dex'
+import { Route as BulkSetIdRouteImport } from './routes/bulk.$setId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -41,6 +43,11 @@ const ProcuradasRoute = ProcuradasRouteImport.update({
   path: '/procuradas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BulkRoute = BulkRouteImport.update({
+  id: '/bulk',
+  path: '/bulk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -51,22 +58,31 @@ const PokemonDexRoute = PokemonDexRouteImport.update({
   path: '/pokemon/$dex',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BulkSetIdRoute = BulkSetIdRouteImport.update({
+  id: '/bulk/$setId',
+  path: '/bulk/$setId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/colecoes': typeof ColecoesRoute
   '/procuradas': typeof ProcuradasRoute
+  '/bulk': typeof BulkRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
+  '/bulk/$setId': typeof BulkSetIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/colecoes': typeof ColecoesRoute
   '/procuradas': typeof ProcuradasRoute
+  '/bulk': typeof BulkRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
+  '/bulk/$setId': typeof BulkSetIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -75,15 +91,24 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/colecoes': typeof ColecoesRoute
   '/procuradas': typeof ProcuradasRoute
+  '/bulk': typeof BulkRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/pokemon/$dex': typeof PokemonDexRoute
+  '/bulk/$setId': typeof BulkSetIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex'
+    | '/'
+    | '/auth'
+    | '/colecoes'
+    | '/procuradas'
+    | '/bulk'
+    | '/admin'
+    | '/pokemon/$dex'
+    | '/bulk/$setId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/colecoes' | '/procuradas' | '/admin' | '/pokemon/$dex'
+  to: '/' | '/auth' | '/colecoes' | '/procuradas' | '/bulk' | '/admin' | '/pokemon/$dex' | '/bulk/$setId'
   id:
     | '__root__'
     | '/'
@@ -91,8 +116,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/colecoes'
     | '/procuradas'
+    | '/bulk'
     | '/_authenticated/admin'
     | '/pokemon/$dex'
+    | '/bulk/$setId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -101,7 +128,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ColecoesRoute: typeof ColecoesRoute
   ProcuradasRoute: typeof ProcuradasRoute
+  BulkRoute: typeof BulkRoute
   PokemonDexRoute: typeof PokemonDexRoute
+  BulkSetIdRoute: typeof BulkSetIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProcuradasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bulk': {
+      id: '/bulk'
+      path: '/bulk'
+      fullPath: '/bulk'
+      preLoaderRoute: typeof BulkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -153,6 +189,13 @@ declare module '@tanstack/react-router' {
       path: '/pokemon/$dex'
       fullPath: '/pokemon/$dex'
       preLoaderRoute: typeof PokemonDexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bulk/$setId': {
+      id: '/bulk/$setId'
+      path: '/bulk/$setId'
+      fullPath: '/bulk/$setId'
+      preLoaderRoute: typeof BulkSetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -175,7 +218,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ColecoesRoute: ColecoesRoute,
   ProcuradasRoute: ProcuradasRoute,
+  BulkRoute: BulkRoute,
   PokemonDexRoute: PokemonDexRoute,
+  BulkSetIdRoute: BulkSetIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
