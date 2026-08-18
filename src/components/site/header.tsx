@@ -29,19 +29,18 @@ export function Header() {
             Coleções
           </Link>
           <Link
-<<<<<<< HEAD
             to="/bulk"
             className="rounded-md px-3 py-2 transition-colors hover:bg-secondary"
             activeProps={{ className: "text-primary" }}
           >
             Bulk
-=======
+          </Link>
+          <Link
             to="/binders"
             className="rounded-md px-3 py-2 transition-colors hover:bg-secondary"
             activeProps={{ className: "text-primary" }}
           >
             Binders
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
           </Link>
           <Link
             to="/admin"

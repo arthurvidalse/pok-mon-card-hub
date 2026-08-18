@@ -196,11 +196,8 @@ function AdminPage() {
             <TabsTrigger value="cartas">Cartas (Pokédex)</TabsTrigger>
             <TabsTrigger value="extras">Cartas Extras</TabsTrigger>
             <TabsTrigger value="colecoes">Coleções</TabsTrigger>
-<<<<<<< HEAD
             <TabsTrigger value="bulk">Bulk</TabsTrigger>
-=======
             <TabsTrigger value="binders">Binders</TabsTrigger>
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
             <TabsTrigger value="contatos">Contatos</TabsTrigger>
             <TabsTrigger value="config">Configurações</TabsTrigger>
           </TabsList>
@@ -216,16 +213,13 @@ function AdminPage() {
             <CollectionGroupsAdmin enabled={adminQuery.data?.isAdmin === true} />
           </TabsContent>
 
-<<<<<<< HEAD
           <TabsContent value="bulk" className="mt-4">
             <BulkAdmin enabled={adminQuery.data?.isAdmin === true} />
           </TabsContent>
 
-=======
           <TabsContent value="binders" className="mt-4">
             <BindersAdmin enabled={adminQuery.data?.isAdmin === true} />
           </TabsContent>
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
 
           <TabsContent value="cartas" className="mt-4">
             <div className="flex flex-col gap-3 sm:flex-row">

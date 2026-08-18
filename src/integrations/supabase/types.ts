@@ -14,7 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-<<<<<<< HEAD
       bulk_cards: {
         Row: {
           id: string
@@ -59,7 +58,10 @@ export type Database = {
           price_override?: number | null
           notes?: string | null
           created_at?: string
-=======
+          updated_at?: string
+        }
+        Relationships: []
+      }
       binder_cards: {
         Row: {
           binder_id: string
@@ -199,14 +201,12 @@ export type Database = {
           rarity?: string | null
           set_id?: string
           set_name?: string | null
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
           updated_at?: string
         }
         Relationships: []
       }
       bulk_price_rules: {
         Row: {
-<<<<<<< HEAD
           id: string
           rarity: string
           condition: string
@@ -228,29 +228,6 @@ export type Database = {
           condition?: string
           price?: number
           created_at?: string
-=======
-          condition: string
-          created_at: string
-          id: string
-          price: number
-          rarity: string
-          updated_at: string
-        }
-        Insert: {
-          condition: string
-          created_at?: string
-          id?: string
-          price?: number
-          rarity: string
-          updated_at?: string
-        }
-        Update: {
-          condition?: string
-          created_at?: string
-          id?: string
-          price?: number
-          rarity?: string
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
           updated_at?: string
         }
         Relationships: []
