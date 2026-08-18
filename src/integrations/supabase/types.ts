@@ -109,6 +109,81 @@ export type Database = {
         }
         Relationships: []
       }
+      bulk_cards: {
+        Row: {
+          card_name: string | null
+          condition: string
+          created_at: string
+          id: string
+          image_url: string | null
+          local_id: string
+          notes: string | null
+          price_override: number | null
+          quantity: number
+          rarity: string | null
+          set_id: string
+          set_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          card_name?: string | null
+          condition?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          local_id: string
+          notes?: string | null
+          price_override?: number | null
+          quantity?: number
+          rarity?: string | null
+          set_id: string
+          set_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          card_name?: string | null
+          condition?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          local_id?: string
+          notes?: string | null
+          price_override?: number | null
+          quantity?: number
+          rarity?: string | null
+          set_id?: string
+          set_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bulk_price_rules: {
+        Row: {
+          condition: string
+          created_at: string
+          id: string
+          price: number
+          rarity: string
+          updated_at: string
+        }
+        Insert: {
+          condition: string
+          created_at?: string
+          id?: string
+          price?: number
+          rarity: string
+          updated_at?: string
+        }
+        Update: {
+          condition?: string
+          created_at?: string
+          id?: string
+          price?: number
+          rarity?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           card_number: string | null
