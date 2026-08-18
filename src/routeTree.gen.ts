@@ -119,22 +119,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-<<<<<<< HEAD
+    | '/binders'
     | '/colecoes'
     | '/procuradas'
     | '/bulk'
     | '/admin'
-    | '/pokemon/$dex'
-    | '/bulk/$setId'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/colecoes' | '/procuradas' | '/bulk' | '/admin' | '/pokemon/$dex' | '/bulk/$setId'
-=======
-    | '/binders'
-    | '/colecoes'
-    | '/procuradas'
-    | '/admin'
     | '/binder/$slug'
     | '/pokemon/$dex'
+    | '/bulk/$setId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,10 +134,11 @@ export interface FileRouteTypes {
     | '/binders'
     | '/colecoes'
     | '/procuradas'
+    | '/bulk'
     | '/admin'
     | '/binder/$slug'
     | '/pokemon/$dex'
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
+    | '/bulk/$setId'
   id:
     | '__root__'
     | '/'
@@ -168,11 +161,8 @@ export interface RootRouteChildren {
   BindersRoute: typeof BindersRoute
   ColecoesRoute: typeof ColecoesRoute
   ProcuradasRoute: typeof ProcuradasRoute
-<<<<<<< HEAD
   BulkRoute: typeof BulkRoute
-=======
   BinderSlugRoute: typeof BinderSlugRoute
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
   PokemonDexRoute: typeof PokemonDexRoute
   BulkSetIdRoute: typeof BulkSetIdRoute
 }

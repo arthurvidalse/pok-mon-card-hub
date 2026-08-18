@@ -1,38 +1,3 @@
-<<<<<<< HEAD
-export type TCGdexSet = {
-  id: string;
-  name: string;
-  logo?: string;
-  symbol?: string;
-  cardCount: {
-    total: number;
-    official: number;
-  };
-};
-
-export type TCGdexCard = {
-  id: string;
-  localId: string;
-  name: string;
-  image?: string;
-  rarity?: string;
-};
-
-export type TCGdexSetDetails = TCGdexSet & {
-  cards: TCGdexCard[];
-};
-
-export async function listSets(): Promise<TCGdexSet[]> {
-  const res = await fetch("https://api.tcgdex.net/v2/en/sets");
-  if (!res.ok) throw new Error("Failed to fetch sets from TCGdex");
-  return res.json();
-}
-
-export async function getSet(id: string): Promise<TCGdexSetDetails> {
-  const res = await fetch(`https://api.tcgdex.net/v2/en/sets/${id}`);
-  if (!res.ok) throw new Error(`Failed to fetch set details for ${id} from TCGdex`);
-  return res.json();
-=======
 const BASE = "https://api.tcgdex.net/v2/en";
 
 export type TcgdexSetBrief = {
@@ -114,5 +79,12 @@ export async function fetchCardsBatch(
   }
   await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, worker));
   return out;
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
+}
+
+// Backwards-compatible aliases and types expected by older code
+export const getSet = fetchSet;
+export const listSets = fetchSets;
+export type TCGdexSet = TcgdexSetBrief;
+export type TCGdexCard = TcgdexCardBrief;
+export type TCGdexSetDetails = TcgdexSetFull;
 }
