@@ -61,3 +61,22 @@ export async function fetchCard(setId: string, localId: string): Promise<TcgdexC
 export function normalizeLocalId(value: string) {
   return String(value ?? "").trim().replace(/^0+(?=\d)/, "");
 }
+
+export async function fetchCardsBatch(
+  setId: string,
+  localIds: string[],
+  concurrency = 8,
+): Promise<Map<string, TcgdexCardFull>> {
+  const out = new Map<string, TcgdexCardFull>();
+  const queue = [...new Set(localIds)];
+  async function worker() {
+    while (queue.length > 0) {
+      const localId = queue.shift();
+      if (!localId) return;
+      const card = await fetchCard(setId, localId);
+      if (card) out.set(normalizeLocalId(localId), card);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, worker));
+  return out;
+}
