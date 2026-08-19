@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { listSets, getSet } from "@/lib/tcgdex";
 import { generateTemplateCsv, downloadCsv, parseCsv, type CsvRow } from "@/lib/csv";
+import { VARIANTS, normalizeVariant, variantLabel } from "@/lib/variants";
 import { listPriceRules, upsertPriceRule, deletePriceRule, listBulkCardsAdmin, updateBulkCard, deleteBulkCard, importBulkCards } from "@/lib/bulk-admin.functions";
 
 export function BulkAdmin({ enabled }: { enabled: boolean }) {
@@ -52,19 +53,21 @@ function PriceRulesAdmin() {
   const rulesQuery = useQuery({ queryKey: ["bulk-price-rules"], queryFn: () => getRules() });
   
   const [rarity, setRarity] = useState("");
+  const [variant, setVariant] = useState<string>("comum");
   const [condition, setCondition] = useState("");
   const [price, setPrice] = useState("");
   
   async function handleSave() {
-    if (!rarity || !condition || !price) {
+    if (!rarity || !variant || !condition || !price) {
       toast.error("Preencha todos os campos");
       return;
     }
     
     try {
-      await saveRule({ data: { rarity, condition, price: parseFloat(price) } });
+      await saveRule({ data: { rarity, variant, condition, price: parseFloat(price) } });
       toast.success("Regra salva com sucesso!");
       setRarity("");
+      setVariant("comum");
       setCondition("");
       setPrice("");
       queryClient.invalidateQueries({ queryKey: ["bulk-price-rules"] });
@@ -87,6 +90,14 @@ function PriceRulesAdmin() {
     <div className="space-y-4">
       <div className="flex gap-2 items-center bg-card p-4 rounded-xl border">
         <Input placeholder="Raridade (ex: Common)" value={rarity} onChange={(e) => setRarity(e.target.value)} />
+        <Select value={variant} onValueChange={setVariant}>
+          <SelectTrigger className="w-44"><SelectValue placeholder="Variante" /></SelectTrigger>
+          <SelectContent>
+            {VARIANTS.map((v) => (
+              <SelectItem key={v} value={v}>{variantLabel(v)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Input placeholder="Condição (ex: NM)" value={condition} onChange={(e) => setCondition(e.target.value)} />
         <Input type="number" step="0.01" placeholder="Preço (ex: 0.50)" value={price} onChange={(e) => setPrice(e.target.value)} />
         <Button onClick={handleSave}><Plus className="w-4 h-4 mr-2" /> Adicionar</Button>
@@ -97,6 +108,7 @@ function PriceRulesAdmin() {
           <thead className="bg-muted/50 text-muted-foreground uppercase text-xs">
             <tr>
               <th className="px-4 py-3">Raridade</th>
+              <th className="px-4 py-3">Variante</th>
               <th className="px-4 py-3">Condição</th>
               <th className="px-4 py-3">Preço</th>
               <th className="px-4 py-3 text-right">Ação</th>
@@ -106,6 +118,7 @@ function PriceRulesAdmin() {
             {(rulesQuery.data || []).map(rule => (
               <tr key={rule.id} className="border-t">
                 <td className="px-4 py-3 font-medium">{rule.rarity}</td>
+                <td className="px-4 py-3">{variantLabel(rule.variant)}</td>
                 <td className="px-4 py-3">{rule.condition}</td>
                 <td className="px-4 py-3">R$ {rule.price.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">
@@ -117,7 +130,7 @@ function PriceRulesAdmin() {
             ))}
             {rulesQuery.data?.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">Nenhuma regra cadastrada.</td>
+                <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">Nenhuma regra cadastrada.</td>
               </tr>
             )}
           </tbody>
@@ -147,10 +160,11 @@ function ExportAdmin() {
     setLoading(true);
     try {
       const details = await getSet(selectedSet);
-      const csvString = generateTemplateCsv(details.cards.map(c => ({
+      const csvString = generateTemplateCsv(details.cards.map((c: any) => ({
         name: c.name,
         set: selectedSet,
-        localId: c.localId
+        localId: c.localId,
+        rarity: c.rarity ?? ""
       })));
       downloadCsv(`bulk_${selectedSet}_template.csv`, csvString);
       toast.success("Planilha gerada com sucesso!");
@@ -166,6 +180,7 @@ function ExportAdmin() {
       <h3 className="font-semibold mb-4">Gerar Planilha Modelo</h3>
       <p className="text-sm text-muted-foreground mb-4">
         Selecione uma coleção para buscar todas as cartas oficiais na TCGdex e gerar um CSV pronto para preenchimento.
+        Cada carta gera duas linhas: uma <strong>comum</strong> e uma <strong>reverse foil</strong>.
       </p>
       
       <div className="space-y-4">
@@ -241,7 +256,7 @@ function ImportAdmin() {
       const rules = await getRules();
       const rulesMap = new Map<string, number>();
       for (const r of rules) {
-        rulesMap.set(`${r.rarity}_${r.condition}`, r.price);
+        rulesMap.set(`${r.rarity}_${r.variant}_${r.condition}`, r.price);
       }
       
       const previewData: PreviewRow[] = validRows.map(csvRow => {
@@ -251,12 +266,13 @@ function ImportAdmin() {
         let price = null;
         let hasRule = true;
         const condition = csvRow.condição || "NM";
-        const rarity = cardDetails?.rarity || "Unknown";
+        const variant = normalizeVariant(csvRow.variante);
+        const rarity = cardDetails?.rarity || csvRow.raridade || "Unknown";
         
         if (csvRow.preço) {
           price = parseFloat(csvRow.preço);
         } else {
-          const rulePrice = rulesMap.get(`${rarity}_${condition}`);
+          const rulePrice = rulesMap.get(`${rarity}_${variant}_${condition}`);
           if (rulePrice !== undefined) {
             price = rulePrice;
           } else {
@@ -275,6 +291,7 @@ function ImportAdmin() {
             card_name: cardDetails?.name || csvRow.nome,
             image_url: cardDetails?.image ? `${cardDetails.image}/high.png` : null, // Assuming TCGdex format
             rarity: rarity,
+            variant,
             condition,
             quantity: parseInt(csvRow.quantidade, 10),
             price_override: csvRow.preço ? parseFloat(csvRow.preço) : null
@@ -335,6 +352,7 @@ function ImportAdmin() {
                   <th className="px-4 py-3">Carta</th>
                   <th className="px-4 py-3">Coleção</th>
                   <th className="px-4 py-3 text-center">Qtd</th>
+                  <th className="px-4 py-3 text-center">Variante</th>
                   <th className="px-4 py-3 text-center">Condição</th>
                   <th className="px-4 py-3">Preço</th>
                 </tr>
@@ -350,6 +368,7 @@ function ImportAdmin() {
                       {p.row.set_name} <span className="text-muted-foreground">#{p.row.local_id}</span>
                     </td>
                     <td className="px-4 py-3 text-center font-medium">{p.row.quantity}</td>
+                    <td className="px-4 py-3 text-center">{variantLabel(p.row.variant)}</td>
                     <td className="px-4 py-3 text-center">{p.row.condition}</td>
                     <td className="px-4 py-3">
                       {p.calcPrice !== null ? (
@@ -423,6 +442,7 @@ function ManualAdmin() {
             <tr>
               <th className="px-4 py-3">Carta</th>
               <th className="px-4 py-3">Raridade</th>
+              <th className="px-4 py-3">Variante</th>
               <th className="px-4 py-3">Qtd</th>
               <th className="px-4 py-3">Condição</th>
               <th className="px-4 py-3">Price Override</th>
@@ -437,6 +457,19 @@ function ManualAdmin() {
                   <div className="text-xs text-muted-foreground">{card.set_name} #{card.local_id}</div>
                 </td>
                 <td className="px-4 py-3 text-xs">{card.rarity}</td>
+                <td className="px-4 py-3">
+                  <Select
+                    value={normalizeVariant(card.variant)}
+                    onValueChange={(val) => { if (val !== card.variant) handleUpdate(card.id, { variant: val }); }}
+                  >
+                    <SelectTrigger className="w-36 h-8 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {VARIANTS.map((v) => (
+                        <SelectItem key={v} value={v}>{variantLabel(v)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </td>
                 <td className="px-4 py-3">
                   <Input 
                     type="number" 
