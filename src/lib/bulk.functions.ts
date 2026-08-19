@@ -27,7 +27,7 @@ export const listBulkSets = createServerFn({ method: "GET" }).handler(async (): 
     } else {
       setsMap.set(row.set_id, {
         setId: row.set_id,
-        setName: row.set_name,
+        setName: row.set_name ?? row.set_id,
         quantity: row.quantity
       });
     }
@@ -89,9 +89,9 @@ export const getBulkSetGallery = createServerFn({ method: "GET" })
       return {
         id: card.id,
         setId: card.set_id,
-        setName: card.set_name,
+        setName: card.set_name ?? card.set_id,
         localId: card.local_id,
-        cardName: card.card_name,
+        cardName: card.card_name ?? `#${card.local_id}`,
         imageUrl: card.image_url || undefined,
         rarity: card.rarity || undefined,
         condition: card.condition,
