@@ -1,11 +1,13 @@
 import { buildWhatsAppUrl } from "./whatsapp";
+import { variantLabel } from "./variants";
 
 export type CartItem = {
-  id: string; // usually set_id + local_id + condition
+  id: string; // set_id + local_id + variant + condition
   setId: string;
   setName: string;
   localId: string;
   cardName: string;
+  variant: string;
   condition: string;
   quantity: number;
   price: number;
@@ -82,7 +84,7 @@ export function buildBulkOrderMessage(cart: Cart, whatsappNumber: string): strin
   for (const item of cart.items) {
     const subtotal = item.quantity * item.price;
     total += subtotal;
-    message += `${item.quantity}x ${item.cardName} (${item.setName} #${item.localId}) - Condição: ${item.condition} - R$ ${subtotal.toFixed(2)}\n`;
+    message += `${item.quantity}x ${item.cardName} (${item.setName} #${item.localId}) - ${variantLabel(item.variant)} - Condição: ${item.condition} - R$ ${subtotal.toFixed(2)}\n`;
   }
   
   message += `\nTotal: R$ ${total.toFixed(2)}\n`;

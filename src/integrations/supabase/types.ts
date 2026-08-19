@@ -124,6 +124,7 @@ export type Database = {
           set_id: string
           set_name: string | null
           updated_at: string
+          variant: string
         }
         Insert: {
           card_name?: string | null
@@ -139,6 +140,7 @@ export type Database = {
           set_id: string
           set_name?: string | null
           updated_at?: string
+          variant?: string
         }
         Update: {
           card_name?: string | null
@@ -154,6 +156,7 @@ export type Database = {
           set_id?: string
           set_name?: string | null
           updated_at?: string
+          variant?: string
         }
         Relationships: []
       }
@@ -165,6 +168,7 @@ export type Database = {
           price: number
           rarity: string
           updated_at: string
+          variant: string
         }
         Insert: {
           condition: string
@@ -173,6 +177,7 @@ export type Database = {
           price?: number
           rarity: string
           updated_at?: string
+          variant?: string
         }
         Update: {
           condition?: string
@@ -181,6 +186,7 @@ export type Database = {
           price?: number
           rarity?: string
           updated_at?: string
+          variant?: string
         }
         Relationships: []
       }
