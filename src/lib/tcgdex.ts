@@ -87,4 +87,3 @@ export const listSets = fetchSets;
 export type TCGdexSet = TcgdexSetBrief;
 export type TCGdexCard = TcgdexCardBrief;
 export type TCGdexSetDetails = TcgdexSetFull;
-}

@@ -72,7 +72,7 @@ function BulkPage() {
             {setsQuery.data?.map((set) => (
               <Link
                 key={set.setId}
-                to={`/bulk/${set.setId}`}
+                to={`/bulk/${set.setId}` as any}
                 className="group relative flex flex-col items-center justify-center p-6 bg-card rounded-2xl border transition-all hover:shadow-lg hover:border-primary/50 hover:-translate-y-1"
               >
                 <div className="h-20 w-full flex items-center justify-center mb-4">

@@ -267,11 +267,7 @@ const rootRouteChildren: RootRouteChildren = {
   BindersRoute: BindersRoute,
   ColecoesRoute: ColecoesRoute,
   ProcuradasRoute: ProcuradasRoute,
-<<<<<<< HEAD
   BulkRoute: BulkRoute,
-=======
-  BinderSlugRoute: BinderSlugRoute,
->>>>>>> f5e97af8e5abd158a7357a3bb14eb108e18c294a
   PokemonDexRoute: PokemonDexRoute,
   BulkSetIdRoute: BulkSetIdRoute,
 }
