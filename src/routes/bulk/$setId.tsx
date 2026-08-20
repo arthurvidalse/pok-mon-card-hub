@@ -40,6 +40,13 @@ function BulkSetPage() {
     queryFn: () => getGallery({ data: { setId } })
   });
 
+  const setLogo = setQuery.data?.logo
+    ? `${setQuery.data.logo}.png`
+    : (setQuery.data as { symbol?: string | null } | undefined)?.symbol
+      ? `${(setQuery.data as { symbol?: string | null }).symbol}.png`
+      : null;
+
+
   const cards = useMemo(() => {
     if (!setQuery.data || !galleryQuery.data) return [];
     
@@ -120,14 +127,15 @@ function BulkSetPage() {
             <div className="flex items-center gap-6">
               {setQuery.isLoading ? (
                 <Skeleton className="w-24 h-24 rounded-xl" />
-              ) : (
+              ) : (setLogo ? (
                 <img 
-                  src={`https://assets.tcgdex.net/en/${setId}/logo.png`}
-                  alt=""
-                  className="w-24 h-24 object-contain filter drop-shadow"
+                  src={setLogo}
+                  alt={setQuery.data?.name ?? setId}
+                  className="w-28 h-24 object-contain filter drop-shadow"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
-              )}
+              ) : null)}
+
               <div>
                 <h1 className="font-display text-3xl font-bold">
                   {setQuery.isLoading ? <Skeleton className="w-48 h-10" /> : setQuery.data?.name}

@@ -8,7 +8,7 @@ import { CartFab } from "@/components/bulk/cart-fab";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 
-export const Route = createFileRoute("/bulk")({
+export const Route = createFileRoute("/bulk/")({
   head: () => ({
     meta: [
       { title: "Bulk — AV Collectr" },
