@@ -210,7 +210,7 @@ function BulkSetPage() {
                           
                           return (
                             <div key={idx} className="bg-card border rounded-lg p-2 text-sm">
-                              <div className="flex justify-between items-center mb-2">
+                              <div className="flex justify-between items-center mb-1">
                                 <span className="font-bold text-primary">
                                   {variantLabel(stockItem.variant)} <span className="text-muted-foreground font-normal uppercase">· {stockItem.condition}</span>
                                 </span>
@@ -218,6 +218,9 @@ function BulkSetPage() {
                                   {stockItem.price !== null ? `R$ ${stockItem.price.toFixed(2)}` : 'Sem preço'}
                                 </span>
                               </div>
+                              {stockItem.rarity && (
+                                <div className="text-[10px] text-muted-foreground mb-1.5">{stockItem.rarity}</div>
+                              )}
                               <div className="flex items-center gap-2">
                                 <div className="flex items-center justify-between bg-secondary rounded-md p-1 h-8 flex-1">
                                   <button 
