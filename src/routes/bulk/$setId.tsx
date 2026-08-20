@@ -40,6 +40,13 @@ function BulkSetPage() {
     queryFn: () => getGallery({ data: { setId } })
   });
 
+  const setLogo = setQuery.data?.logo
+    ? `${setQuery.data.logo}.png`
+    : (setQuery.data as { symbol?: string | null } | undefined)?.symbol
+      ? `${(setQuery.data as { symbol?: string | null }).symbol}.png`
+      : null;
+
+
   const cards = useMemo(() => {
     if (!setQuery.data || !galleryQuery.data) return [];
     
