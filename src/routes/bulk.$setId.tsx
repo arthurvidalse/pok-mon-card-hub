@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart, Plus, Minus } from "lucide-react";
 import { useState, useMemo } from "react";
 import { addToCart } from "@/lib/bulk-cart";
+import { variantLabel } from "@/lib/variants";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/bulk/$setId")({
@@ -72,7 +73,7 @@ function BulkSetPage() {
   }, [cards, searchTerm]);
 
   function handleAddToCart(stockItem: any, officialCard: any) {
-    const qtyId = `${officialCard.localId}_${stockItem.condition}`;
+    const qtyId = `${officialCard.localId}_${stockItem.variant}_${stockItem.condition}`;
     const qty = qtys[qtyId] || 1;
     
     if (stockItem.price === null) {
@@ -81,11 +82,12 @@ function BulkSetPage() {
     }
     
     addToCart({
-      id: `${setId}_${officialCard.localId}_${stockItem.condition}`,
+      id: `${setId}_${officialCard.localId}_${stockItem.variant}_${stockItem.condition}`,
       setId,
       setName: setQuery.data?.name || setId,
       localId: officialCard.localId,
       cardName: officialCard.name,
+      variant: stockItem.variant,
       condition: stockItem.condition,
       quantity: qty,
       price: stockItem.price,
@@ -203,13 +205,15 @@ function BulkSetPage() {
                     {hasStock ? (
                       <div className="mt-auto pt-3 space-y-2">
                         {card.stock.map((stockItem: any, idx: number) => {
-                          const qtyId = `${card.localId}_${stockItem.condition}`;
+                          const qtyId = `${card.localId}_${stockItem.variant}_${stockItem.condition}`;
                           const currentQty = qtys[qtyId] || 1;
                           
                           return (
                             <div key={idx} className="bg-card border rounded-lg p-2 text-sm">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="font-bold text-primary uppercase">{stockItem.condition}</span>
+                                <span className="font-bold text-primary">
+                                  {variantLabel(stockItem.variant)} <span className="text-muted-foreground font-normal uppercase">· {stockItem.condition}</span>
+                                </span>
                                 <span className="font-semibold">
                                   {stockItem.price !== null ? `R$ ${stockItem.price.toFixed(2)}` : 'Sem preço'}
                                 </span>
