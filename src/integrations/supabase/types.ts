@@ -14,54 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      bulk_cards: {
-        Row: {
-          id: string
-          set_id: string
-          set_name: string
-          local_id: string
-          card_name: string
-          image_url: string | null
-          rarity: string | null
-          condition: string
-          quantity: number
-          price_override: number | null
-          notes: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          set_id: string
-          set_name: string
-          local_id: string
-          card_name: string
-          image_url?: string | null
-          rarity?: string | null
-          condition: string
-          quantity?: number
-          price_override?: number | null
-          notes?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          set_id?: string
-          set_name?: string
-          local_id?: string
-          card_name?: string
-          image_url?: string | null
-          rarity?: string | null
-          condition?: string
-          quantity?: number
-          price_override?: number | null
-          notes?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       binder_cards: {
         Row: {
           binder_id: string
@@ -157,30 +109,84 @@ export type Database = {
         }
         Relationships: []
       }
-      bulk_price_rules: {
+      bulk_cards: {
         Row: {
-          id: string
-          rarity: string
+          card_name: string | null
           condition: string
-          price: number
           created_at: string
+          id: string
+          image_url: string | null
+          local_id: string
+          notes: string | null
+          price_override: number | null
+          quantity: number
+          rarity: string | null
+          set_id: string
+          set_name: string | null
           updated_at: string
+          variant: string
         }
         Insert: {
-          id?: string
-          rarity: string
-          condition: string
-          price: number
+          card_name?: string | null
+          condition?: string
           created_at?: string
+          id?: string
+          image_url?: string | null
+          local_id: string
+          notes?: string | null
+          price_override?: number | null
+          quantity?: number
+          rarity?: string | null
+          set_id: string
+          set_name?: string | null
           updated_at?: string
+          variant?: string
         }
         Update: {
-          id?: string
-          rarity?: string
+          card_name?: string | null
           condition?: string
-          price?: number
           created_at?: string
+          id?: string
+          image_url?: string | null
+          local_id?: string
+          notes?: string | null
+          price_override?: number | null
+          quantity?: number
+          rarity?: string | null
+          set_id?: string
+          set_name?: string | null
           updated_at?: string
+          variant?: string
+        }
+        Relationships: []
+      }
+      bulk_price_rules: {
+        Row: {
+          condition: string
+          created_at: string
+          id: string
+          price: number
+          rarity: string
+          updated_at: string
+          variant: string
+        }
+        Insert: {
+          condition: string
+          created_at?: string
+          id?: string
+          price?: number
+          rarity: string
+          updated_at?: string
+          variant?: string
+        }
+        Update: {
+          condition?: string
+          created_at?: string
+          id?: string
+          price?: number
+          rarity?: string
+          updated_at?: string
+          variant?: string
         }
         Relationships: []
       }

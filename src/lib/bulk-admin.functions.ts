@@ -16,6 +16,7 @@ export const listPriceRules = createServerFn({ method: "GET" })
       .from("bulk_price_rules")
       .select("*")
       .order("rarity")
+      .order("variant")
       .order("condition");
     if (error) throw new Error(error.message);
     return data || [];
@@ -23,14 +24,14 @@ export const listPriceRules = createServerFn({ method: "GET" })
 
 export const upsertPriceRule = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { rarity: string; condition: string; price: number }) => input)
+  .inputValidator((input: { rarity: string; variant: string; condition: string; price: number }) => input)
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { error } = await context.supabase
       .from("bulk_price_rules")
       .upsert(
-        { rarity: data.rarity, condition: data.condition, price: data.price },
-        { onConflict: "rarity,condition" }
+        { rarity: data.rarity, variant: data.variant, condition: data.condition, price: data.price },
+        { onConflict: "rarity,variant,condition" }
       );
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -66,6 +67,7 @@ export const listBulkCardsAdmin = createServerFn({ method: "GET" })
     const { data: rows, count, error } = await query
       .order("set_id")
       .order("local_id")
+      .order("variant")
       .range(page * pageSize, page * pageSize + pageSize - 1);
 
     if (error) throw new Error(error.message);
@@ -74,7 +76,7 @@ export const listBulkCardsAdmin = createServerFn({ method: "GET" })
 
 export const updateBulkCard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { id: string; quantity?: number; condition?: string; price_override?: number | null }) => input)
+  .inputValidator((input: { id: string; quantity?: number; variant?: string; condition?: string; price_override?: number | null }) => input)
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { id, ...updates } = data;
@@ -109,6 +111,7 @@ export const importBulkCards = createServerFn({ method: "POST" })
       card_name: r.card_name,
       image_url: r.image_url,
       rarity: r.rarity,
+      variant: r.variant,
       condition: r.condition,
       quantity: r.quantity,
       price_override: r.price_override
@@ -116,7 +119,7 @@ export const importBulkCards = createServerFn({ method: "POST" })
 
     const { error } = await context.supabase
       .from("bulk_cards")
-      .upsert(toUpsert, { onConflict: "set_id,local_id,condition" });
+      .upsert(toUpsert, { onConflict: "set_id,local_id,variant,condition" });
       
     if (error) throw new Error(error.message);
     return { ok: true, count: toUpsert.length };

@@ -13,13 +13,13 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BindersRouteImport } from './routes/binders'
+import { Route as BulkRouteImport } from './routes/bulk'
 import { Route as ColecoesRouteImport } from './routes/colecoes'
 import { Route as ProcuradasRouteImport } from './routes/procuradas'
-import { Route as BulkRouteImport } from './routes/bulk'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as BinderSlugRouteImport } from './routes/binder.$slug'
-import { Route as PokemonDexRouteImport } from './routes/pokemon.$dex'
 import { Route as BulkSetIdRouteImport } from './routes/bulk.$setId'
+import { Route as PokemonDexRouteImport } from './routes/pokemon.$dex'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +40,11 @@ const BindersRoute = BindersRouteImport.update({
   path: '/binders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BulkRoute = BulkRouteImport.update({
+  id: '/bulk',
+  path: '/bulk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ColecoesRoute = ColecoesRouteImport.update({
   id: '/colecoes',
   path: '/colecoes',
@@ -48,11 +53,6 @@ const ColecoesRoute = ColecoesRouteImport.update({
 const ProcuradasRoute = ProcuradasRouteImport.update({
   id: '/procuradas',
   path: '/procuradas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BulkRoute = BulkRouteImport.update({
-  id: '/bulk',
-  path: '/bulk',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -65,14 +65,14 @@ const BinderSlugRoute = BinderSlugRouteImport.update({
   path: '/binder/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BulkSetIdRoute = BulkSetIdRouteImport.update({
+  id: '/$setId',
+  path: '/$setId',
+  getParentRoute: () => BulkRoute,
+} as any)
 const PokemonDexRoute = PokemonDexRouteImport.update({
   id: '/pokemon/$dex',
   path: '/pokemon/$dex',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BulkSetIdRoute = BulkSetIdRouteImport.update({
-  id: '/bulk/$setId',
-  path: '/bulk/$setId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -80,25 +80,25 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/binders': typeof BindersRoute
+  '/bulk': typeof BulkRouteWithChildren
   '/colecoes': typeof ColecoesRoute
   '/procuradas': typeof ProcuradasRoute
-  '/bulk': typeof BulkRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/binder/$slug': typeof BinderSlugRoute
-  '/pokemon/$dex': typeof PokemonDexRoute
   '/bulk/$setId': typeof BulkSetIdRoute
+  '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/binders': typeof BindersRoute
+  '/bulk': typeof BulkRouteWithChildren
   '/colecoes': typeof ColecoesRoute
   '/procuradas': typeof ProcuradasRoute
-  '/bulk': typeof BulkRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/binder/$slug': typeof BinderSlugRoute
-  '/pokemon/$dex': typeof PokemonDexRoute
   '/bulk/$setId': typeof BulkSetIdRoute
+  '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,13 +106,13 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/binders': typeof BindersRoute
+  '/bulk': typeof BulkRouteWithChildren
   '/colecoes': typeof ColecoesRoute
   '/procuradas': typeof ProcuradasRoute
-  '/bulk': typeof BulkRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/binder/$slug': typeof BinderSlugRoute
-  '/pokemon/$dex': typeof PokemonDexRoute
   '/bulk/$setId': typeof BulkSetIdRoute
+  '/pokemon/$dex': typeof PokemonDexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,38 +120,38 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/binders'
+    | '/bulk'
     | '/colecoes'
     | '/procuradas'
-    | '/bulk'
     | '/admin'
     | '/binder/$slug'
-    | '/pokemon/$dex'
     | '/bulk/$setId'
+    | '/pokemon/$dex'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/binders'
+    | '/bulk'
     | '/colecoes'
     | '/procuradas'
-    | '/bulk'
     | '/admin'
     | '/binder/$slug'
-    | '/pokemon/$dex'
     | '/bulk/$setId'
+    | '/pokemon/$dex'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/binders'
+    | '/bulk'
     | '/colecoes'
     | '/procuradas'
-    | '/bulk'
     | '/_authenticated/admin'
     | '/binder/$slug'
-    | '/pokemon/$dex'
     | '/bulk/$setId'
+    | '/pokemon/$dex'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,12 +159,11 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BindersRoute: typeof BindersRoute
+  BulkRoute: typeof BulkRouteWithChildren
   ColecoesRoute: typeof ColecoesRoute
   ProcuradasRoute: typeof ProcuradasRoute
-  BulkRoute: typeof BulkRoute
   BinderSlugRoute: typeof BinderSlugRoute
   PokemonDexRoute: typeof PokemonDexRoute
-  BulkSetIdRoute: typeof BulkSetIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -197,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bulk': {
+      id: '/bulk'
+      path: '/bulk'
+      fullPath: '/bulk'
+      preLoaderRoute: typeof BulkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/colecoes': {
       id: '/colecoes'
       path: '/colecoes'
@@ -209,13 +215,6 @@ declare module '@tanstack/react-router' {
       path: '/procuradas'
       fullPath: '/procuradas'
       preLoaderRoute: typeof ProcuradasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bulk': {
-      id: '/bulk'
-      path: '/bulk'
-      fullPath: '/bulk'
-      preLoaderRoute: typeof BulkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -232,18 +231,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BinderSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bulk/$setId': {
+      id: '/bulk/$setId'
+      path: '/$setId'
+      fullPath: '/bulk/$setId'
+      preLoaderRoute: typeof BulkSetIdRouteImport
+      parentRoute: typeof BulkRoute
+    }
     '/pokemon/$dex': {
       id: '/pokemon/$dex'
       path: '/pokemon/$dex'
       fullPath: '/pokemon/$dex'
       preLoaderRoute: typeof PokemonDexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bulk/$setId': {
-      id: '/bulk/$setId'
-      path: '/bulk/$setId'
-      fullPath: '/bulk/$setId'
-      preLoaderRoute: typeof BulkSetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -260,16 +259,26 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface BulkRouteChildren {
+  BulkSetIdRoute: typeof BulkSetIdRoute
+}
+
+const BulkRouteChildren: BulkRouteChildren = {
+  BulkSetIdRoute: BulkSetIdRoute,
+}
+
+const BulkRouteWithChildren = BulkRoute._addFileChildren(BulkRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BindersRoute: BindersRoute,
+  BulkRoute: BulkRouteWithChildren,
   ColecoesRoute: ColecoesRoute,
   ProcuradasRoute: ProcuradasRoute,
-  BulkRoute: BulkRoute,
+  BinderSlugRoute: BinderSlugRoute,
   PokemonDexRoute: PokemonDexRoute,
-  BulkSetIdRoute: BulkSetIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
