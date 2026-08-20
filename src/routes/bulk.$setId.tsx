@@ -210,11 +210,7 @@ function BulkSetPage() {
                           
                           return (
                             <div key={idx} className="bg-card border rounded-lg p-2 text-sm">
-<<<<<<< HEAD
-                              <div className="flex justify-between items-center mb-2">
-=======
                               <div className="flex justify-between items-center mb-1">
->>>>>>> 6b6171d789ad8f5a4e3dfd558100809ea3e2e31a
                                 <span className="font-bold text-primary">
                                   {variantLabel(stockItem.variant)} <span className="text-muted-foreground font-normal uppercase">· {stockItem.condition}</span>
                                 </span>
